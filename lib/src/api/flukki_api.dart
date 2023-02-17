@@ -13,7 +13,8 @@ class FlukkiApi {
   static const apiAddressPrefix =
       'https://us-central1-flukki-web.cloudfunctions.net/';
 
-  static Dio get dio => Dio(BaseOptions(headers: {
+  static Dio get dio =>
+      Dio(BaseOptions(contentType: Headers.jsonContentType, headers: {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Headers': '',
         'Access-Control-Allow-Methods': '*',
