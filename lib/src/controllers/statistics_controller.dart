@@ -10,6 +10,7 @@ class StatisticsController {
   StatisticsController._();
 
   Future<void> sendStatistics({ProductTour? productTour}) async {
+    if (FlukkiController.instance.isInBuilderTestMode) return;
     final appName = FlukkiController.instance.appId;
     final apiKey = FlukkiController.instance.apiKey!;
     final device = DeviceIdController.instance.deviceId;
@@ -20,6 +21,7 @@ class StatisticsController {
       productTours.addAll(ProductToursController.instance.productTours);
     }
     final statistics = productTours
+        .where((element) => element.id != null)
         .map((productTour) => ProductTourProgress.fromProductTour(productTour))
         .toList();
 
