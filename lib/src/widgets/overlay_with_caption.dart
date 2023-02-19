@@ -1,3 +1,4 @@
+import 'package:flukki_product_tours/src/controllers/pointer_widgets_controller.dart';
 import 'package:flutter/material.dart';
 
 import '../controllers/flukki_controller.dart';
@@ -102,8 +103,9 @@ class OverlayWithCaption extends StatelessWidget {
     );
   }
 
-  void _nextStep() {
-    ProductToursController.instance.madeProgress(productTour);
+  Future<void> _nextStep() async {
+    await ProductToursController.instance.madeProgress(productTour,
+        isTestMode: FlukkiController.instance.isInBuilderTestMode);
     closeOverlay();
     if (productTour.isFinished) {
       ProductToursController.instance.isStepDisplayed = false;
@@ -113,7 +115,7 @@ class OverlayWithCaption extends StatelessWidget {
     } else {
       Future.delayed(const Duration(milliseconds: 300)).then((value) {
         ProductToursController.instance.isStepDisplayed = false;
-        continueProductTour();
+        UserWidgetsController.instance.performCheck();
       });
     }
   }

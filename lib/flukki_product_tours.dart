@@ -1,19 +1,19 @@
 import 'dart:async';
-import 'package:flukki_product_tours/constants.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
+import 'constants.dart';
 import 'src/controllers/flukki_controller.dart';
+import 'src/controllers/pointer_widgets_controller.dart';
 import 'src/controllers/product_tour_creator_controller.dart';
 
 import 'src/controllers/product_tours_controller.dart';
-import 'src/helpers/product_tour_helper_methods.dart';
+import 'src/controllers/widgets_on_screen_controller.dart';
 import 'src/helpers/product_tour_matcher.dart';
 import 'src/models/product_tour_model.dart';
 import 'src/models/product_tour_step_model.dart';
 import 'src/widgets/announcement_builder.dart';
 import 'src/widgets/element_with_widget_tree.dart';
-import 'src/widgets/overlay_with_caption.dart';
 import 'src/widgets/overlay_with_hole.dart';
 
 class Flukki {
@@ -27,11 +27,12 @@ class Flukki {
   /// [appName] is a unique app name, important when you have more than one app
   /// [callbacks] is a list of functions, that may be used when building announcements
   Future<void> initialize(
-          {required String key,
-          required String appName,
-          Map<String, void Function()>? callbacks}) async =>
-      FlukkiController.instance
-          .initialize(key: key, appName: appName, callbacks: callbacks);
+      {required String key,
+      required String appName,
+      Map<String, void Function()>? callbacks}) async {
+    return FlukkiController.instance
+        .initialize(key: key, appName: appName, callbacks: callbacks);
+  }
 
   /// A method to turn on product tours builder
   void turnOnBuilder() => FlukkiController.instance.turnOnBuilder();
@@ -49,88 +50,100 @@ class FlukkiProductTour extends StatefulWidget {
 
 class _FlukkiProductTourState extends State<FlukkiProductTour> {
   static OverlayEntry? lastEntry;
-  static RenderBox? lastBox;
-  static Offset? lastOffset;
   static Element? lastElement;
   static int? lastWidgetIndex;
-  static List<String>? lastWidgetTree;
   static ProductTourCreatorController? productTourCreatorController;
-  static DateTime? lastWidgetFinderTime;
 
   static late BuildContext contextToExplore;
   bool isAddingPointerStep = false;
   final formKey = GlobalKey<FormState>();
   bool saving = false;
+  StreamSubscription? streamSubscription;
+  bool creationModeEnabled = false;
+
+  @override
+  void initState() {
+    super.initState();
+    streamSubscription =
+        FlukkiController.instance.onCreationModeChanged.listen((event) {
+      if (mounted) {
+        setState(() => creationModeEnabled = event);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    streamSubscription?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final child = _MyRecognizableWrapper(child: widget.child);
-    return StreamBuilder(
-        stream: FlukkiController.instance.onCreationModeChanged,
-        builder: (ctx, snap) {
-          productTourCreatorController
-              ?.registerEditorRefresher(() => setState(() {}));
-          contextToExplore = context;
-          _initializeWidgetTreeInspector();
 
-          if (!FlukkiController.instance.isInBuilderMode) {
-            return child;
-          }
+    productTourCreatorController
+        ?.registerEditorRefresher(() => setState(() {}));
+    contextToExplore = context;
+    UserWidgetsController.instance.buildContext = contextToExplore;
 
-          return Scaffold(
-            body: Form(
-              key: formKey,
-              child: Column(
-                children: [
-                  Expanded(
-                    child: MouseRegion(
-                      hitTestBehavior: HitTestBehavior.translucent,
-                      onHover: !isAddingPointerStep
-                          ? null
-                          : (event) => _pointWidget(event, context),
-                      child: Builder(
-                        builder: (BuildContext ctx) {
-                          contextToExplore = ctx;
-                          return child;
-                        },
-                      ),
-                    ),
-                  ),
-                  if (productTourCreatorController == null)
-                    _ListOfProductTours(onTap: (productTour) {
-                      productTourCreatorController =
-                          ProductTourCreatorController(
-                              productTour: productTour);
-                      setState(() {});
-                    }, createNewProductTour: () {
-                      productTourCreatorController =
-                          ProductTourCreatorController();
-                      setState(() {});
-                    }),
-                  if (productTourCreatorController != null)
-                    _ProductTourEditor(
-                      saving: saving,
-                      controller: productTourCreatorController!,
-                      turnOnPointer: () => setState(() {
-                        isAddingPointerStep = true;
-                      }),
-                      turnOffPointer: () => setState(() {
-                        isAddingPointerStep = false;
-                      }),
-                      contextToExplore: contextToExplore,
-                      finishEditingWithoutSaving: () {
-                        setState(() {
-                          productTourCreatorController = null;
-                        });
-                      },
-                      isAddingPointerStep: isAddingPointerStep,
-                      saveProductTour: _saveProductTour,
-                    )
-                ],
+    if (!FlukkiController.instance.isInBuilderMode) {
+      return child;
+    }
+
+    return Scaffold(
+      body: Form(
+        key: formKey,
+        child: Column(
+          children: [
+            Expanded(
+              child: MouseRegion(
+                hitTestBehavior: HitTestBehavior.translucent,
+                onHover: !isAddingPointerStep
+                    ? null
+                    : (event) => _pointWidget(event, context),
+                child: Builder(
+                  builder: (BuildContext ctx) {
+                    contextToExplore = ctx;
+                    UserWidgetsController.instance.buildContext =
+                        contextToExplore;
+                    return child;
+                  },
+                ),
               ),
             ),
-          );
-        });
+            if (productTourCreatorController == null)
+              _ListOfProductTours(onTap: (productTour) {
+                productTourCreatorController =
+                    ProductTourCreatorController(productTour: productTour);
+                setState(() {});
+              }, createNewProductTour: () {
+                productTourCreatorController = ProductTourCreatorController();
+                setState(() {});
+              }),
+            if (productTourCreatorController != null)
+              _ProductTourEditor(
+                saving: saving,
+                controller: productTourCreatorController!,
+                turnOnPointer: () => setState(() {
+                  isAddingPointerStep = true;
+                }),
+                turnOffPointer: () => setState(() {
+                  isAddingPointerStep = false;
+                }),
+                contextToExplore: contextToExplore,
+                finishEditingWithoutSaving: () {
+                  setState(() {
+                    productTourCreatorController = null;
+                  });
+                },
+                isAddingPointerStep: isAddingPointerStep,
+                saveProductTour: _saveProductTour,
+              )
+          ],
+        ),
+      ),
+    );
   }
 
   Future<void> _saveProductTour() async {
@@ -147,57 +160,24 @@ class _FlukkiProductTourState extends State<FlukkiProductTour> {
   }
 
   void _pointWidget(PointerHoverEvent event, BuildContext context) {
-    if (wasMouseOutsideLastBox(event)) {
-      if (lastEntry != null) {
-        lastEntry!.remove();
-        lastEntry = null;
-      }
-      lastWidgetIndex = null;
-      ElementWithWidgetTree? elementWithWidgetTree = findWidget(event);
-      if (elementWithWidgetTree != null) {
-        lastElement = elementWithWidgetTree.element;
-        lastWidgetTree = elementWithWidgetTree.widgetTree;
-        var box = elementWithWidgetTree.element.renderObject as RenderBox;
-        var position = box.localToGlobal(Offset.zero);
-        if (lastElement == elementWithWidgetTree.element &&
-            lastWidgetIndex != elementWithWidgetTree.index) {
-          elementWithWidgetTree.index =
-              lastWidgetIndex ?? elementWithWidgetTree.index;
-        }
-        lastWidgetIndex = elementWithWidgetTree.index;
-        _pointWidgetCreator(context, box, position, elementWithWidgetTree);
-      }
-    } else {
-      if (lastEntry != null) {
-        lastEntry!.remove();
-        lastEntry = null;
-      }
-      ElementWithWidgetTree? elementWithWidgetTree =
-          findWidget(event, element: lastElement);
-      if (elementWithWidgetTree != null) {
-        var box = elementWithWidgetTree.element.renderObject as RenderBox;
-        var position = box.localToGlobal(Offset.zero);
-        if (lastElement == elementWithWidgetTree.element &&
-            lastWidgetIndex != elementWithWidgetTree.index) {
-          elementWithWidgetTree.index =
-              lastWidgetIndex ?? elementWithWidgetTree.index;
-        }
-        lastWidgetIndex = elementWithWidgetTree.index;
-        _pointWidgetCreator(context, box, position, elementWithWidgetTree);
-      }
+    if (lastEntry != null) {
+      lastEntry!.remove();
+      lastEntry = null;
     }
-  }
-
-  void _initializeWidgetTreeInspector() {
-    if (!FlukkiController.instance.wasWidgetInspectorInitiated) {
-      FlukkiController.instance.widgetExplorerInitiated();
-      WidgetsBinding.instance.addPersistentFrameCallback((timeStamp) {
-        if (!ProductToursController.instance.isStepDisplayed &&
-            (!FlukkiController.instance.isInBuilderMode ||
-                FlukkiController.instance.isInBuilderTestMode)) {
-          _exploreWidgetTree();
-        }
-      });
+    lastWidgetIndex = null;
+    ElementWithWidgetTree? elementWithWidgetTree =
+        BuilderWidgetsController.instance.getMatchingElement(event.position);
+    if (elementWithWidgetTree != null) {
+      lastElement = elementWithWidgetTree.element;
+      var box = elementWithWidgetTree.element.renderObject as RenderBox;
+      var position = box.localToGlobal(Offset.zero);
+      if (lastElement == elementWithWidgetTree.element &&
+          lastWidgetIndex != elementWithWidgetTree.index) {
+        elementWithWidgetTree.index =
+            lastWidgetIndex ?? elementWithWidgetTree.index;
+      }
+      lastWidgetIndex = elementWithWidgetTree.index;
+      _pointWidgetCreator(context, box, position, elementWithWidgetTree);
     }
   }
 
@@ -207,12 +187,9 @@ class _FlukkiProductTourState extends State<FlukkiProductTour> {
 
   _pointWidgetCreator(BuildContext context, RenderBox box, Offset position,
       ElementWithWidgetTree elementWithWidgetTree) {
-    lastBox = box;
-    lastOffset = position;
     lastEntry = OverlayEntry(
         builder: (ctx) => PointerBuilderOverlay(
               () {
-                lastBox = null;
                 lastEntry?.remove();
                 lastEntry = null;
               },
@@ -222,274 +199,16 @@ class _FlukkiProductTourState extends State<FlukkiProductTour> {
               updateProductTour: _updateProductTourBuilder,
               onHover: () {
                 if (lastEntry != null) {
-                  lastBox = null;
                   lastEntry!.remove();
                   lastEntry = null;
                 }
               },
-              hoveredWidgetChanged: (event) =>
-                  findWidget(event, element: lastElement),
+              hoveredWidgetChanged: (event) => BuilderWidgetsController.instance
+                  .getMatchingElement(event.position),
               controller: productTourCreatorController!,
               elementWithWidgetTree: elementWithWidgetTree,
             ));
     Overlay.of(context).insert(lastEntry!);
-  }
-
-  ElementWithWidgetTree? findWidget(PointerHoverEvent details,
-      {Element? element}) {
-    final now = DateTime.now();
-    lastWidgetFinderTime = now;
-    List<Element> elements = [];
-    List<String> widgetTree = [];
-    Map<Element, List<String>> widgetTreePerElement = {};
-    Map<String, List<Element>> elementsPerWidgetType = {};
-    void visitor(Element element) {
-      if (!lastWidgetFinderTime!.isAtSameMomentAs(now)) return;
-      String? widgetName;
-      try {
-        widgetName = cropWidgetName(element.widget.toString());
-      } catch (_) {
-        element.visitChildElements(visitor);
-        return;
-      }
-      if (elementsPerWidgetType[widgetName] == null) {
-        elementsPerWidgetType.putIfAbsent(widgetName, () => [element]);
-      } else {
-        elementsPerWidgetType[widgetName]!.add(element);
-      }
-      if (element.renderObject is! RenderBox) {
-        widgetTree.add(widgetName);
-        element.visitChildElements(visitor);
-      } else {
-        final box = element.renderObject as RenderBox;
-        final position = box.localToGlobal(Offset.zero);
-
-        widgetTree.add(widgetName);
-
-        if (details.position.dx > position.dx &&
-            details.position.dx < position.dx + box.size.width &&
-            details.position.dy > position.dy &&
-            details.position.dy < position.dy + box.size.height) {
-          widgetTreePerElement.putIfAbsent(
-              element, () => List.from(widgetTree));
-          elements.add(element);
-        }
-        element.visitChildElements(visitor);
-      }
-    }
-
-    if (element != null) {
-      widgetTree = List.from(lastWidgetTree!);
-      widgetTree.removeLast();
-      visitor(element);
-    } else {
-      contextToExplore.visitChildElements(visitor);
-    }
-
-    if (elements.isEmpty) return null;
-
-    final lastElement = elements.last;
-
-    List<String> ancestorsList = getAncestorsList();
-    lastElement.visitAncestorElements((e) => ancestorVisitor(e, ancestorsList));
-    ancestorsList.insert(0, cropWidgetName(lastElement.widget.toString()));
-
-    Map<String, List<Element>> elementsPerKey = {};
-    final lastElementWidgetName = cropWidgetName(lastElement.widget.toString());
-    final elementsList = elementsPerWidgetType[lastElementWidgetName];
-    for (var e in elementsList!) {
-      final ancestors = <String>[];
-      e.visitAncestorElements((ee) => ancestorVisitor(ee, ancestors));
-      ancestors.insert(0, cropWidgetName(e.widget.toString()));
-      final key = ancestors.toString();
-      if (elementsPerKey[key] == null) {
-        elementsPerKey.putIfAbsent(key, () => [e]);
-      } else {
-        elementsPerKey[key]!.add(e);
-      }
-    }
-    final elementsListIndexed = elementsPerKey[ancestorsList.toString()];
-
-    return ElementWithWidgetTree(
-        element: lastElement,
-        widgetTree: ancestorsList,
-        index: elementsListIndexed!.indexOf(lastElement));
-  }
-
-  List<String> getAncestorsList() {
-    final List<String> ancestorsList = [];
-
-    return ancestorsList;
-  }
-
-  static bool ancestorVisitor(Element e, List<String> ancestors) {
-    final widgetName = cropWidgetName(e.widget.toString());
-    if (widgetName.contains('MyRecognizableWrapper')) {
-      return false;
-    }
-    ancestors.add(cropWidgetName(e.widget.toString()));
-    return true;
-  }
-
-  static String cropWidgetName(String widgetName) {
-    final parametersIndex = widgetName.indexOf('(');
-    if (parametersIndex != -1) {
-      widgetName = widgetName.substring(0, parametersIndex);
-    }
-    final hashIndex = widgetName.indexOf('#');
-    if (hashIndex != -1) {
-      widgetName = widgetName.substring(0, hashIndex);
-    }
-    return widgetName;
-  }
-
-  static Future? pointerFuture;
-  static bool _isExploring = false;
-
-  static void _exploreWidgetTree() {
-    if (_isExploring) return;
-    if (!FlukkiController.instance.isInBuilderTestMode &&
-        ProductToursController.instance.productTours.isEmpty) return;
-    _isExploring = true;
-    List<Element> elementsPerWidgetType = [];
-
-    final announcementProductTour =
-        ProductTourMatcher.getAnnouncementProductTour();
-    if (announcementProductTour != null) {
-      _isExploring = false;
-      _showAnnouncementToUser(announcementProductTour);
-      return;
-    }
-
-    void visitor(Element element) async {
-      if (ProductToursController.instance.isStepDisplayed) return;
-
-      String? widgetName;
-
-      try {
-        widgetName = cropWidgetName(element.widget.toString());
-      } catch (_) {}
-      if (widgetName == null) {
-        element.visitChildElements(visitor);
-        return;
-      }
-
-      final shouldCheckThisWidget =
-          ProductTourMatcher.shouldCheckThisWidget(widgetName);
-      if (!shouldCheckThisWidget) {
-        element.visitChildElements(visitor);
-        return;
-      }
-      elementsPerWidgetType.add(element);
-    }
-
-    if (pointerFuture == null) {
-      contextToExplore.visitChildElements(visitor);
-    }
-
-    Map<String, List<Element>> elementsPerKey = {};
-    for (var e in elementsPerWidgetType) {
-      final ancestors = <String>[];
-      e.visitAncestorElements((ee) => ancestorVisitor(ee, ancestors));
-      ancestors.insert(0, cropWidgetName(e.widget.toString()));
-      final key = ancestors.toString();
-      if (elementsPerKey[key] == null) {
-        elementsPerKey.putIfAbsent(key, () => [e]);
-      } else {
-        elementsPerKey[key]!.add(e);
-      }
-    }
-    ProductTour? productTour;
-    List<Element> matchingElements = [];
-    elementsPerKey.forEach((key, value) {
-      List<String> ancestors = [];
-      value[0].visitAncestorElements((e) => ancestorVisitor(e, ancestors));
-      ancestors.insert(0, cropWidgetName(value[0].widget.toString()));
-      if (productTour == null) {
-        productTour = ProductTourMatcher.getMatchingProductTour(ancestors, 0);
-        if (productTour != null) {
-          matchingElements = value;
-        }
-      }
-    });
-
-    if (productTour != null) {
-      final currentStep = productTour!.currentStep;
-      if (currentStep is PointerProductTourStep) {
-        final box =
-            matchingElements[currentStep.widgetIndex].renderObject as RenderBox;
-        final position = box.localToGlobal(Offset.zero);
-        _pointWidgetUser(
-            contextToExplore, box, position, productTour!, currentStep);
-      }
-    }
-
-    _isExploring = false;
-  }
-
-  static void _pointWidgetUser(
-      BuildContext contextToExplore,
-      RenderBox box,
-      Offset position,
-      ProductTour productTour,
-      PointerProductTourStep productTourStep) async {
-    lastEntry = _createOverlay(box, position, productTourStep, productTour);
-    Overlay.of(contextToExplore).insert(lastEntry!);
-    ProductToursController.instance.isStepDisplayed = true;
-  }
-
-  static OverlayEntry _createOverlay(RenderBox box, Offset position,
-      PointerProductTourStep productTourStep, ProductTour productTour) {
-    return OverlayEntry(
-        builder: (ctx) => OverlayWithCaption(() {
-              lastEntry?.remove();
-              lastEntry = null;
-            }, box, position, productTourStep, productTour,
-                () => _exploreWidgetTree()));
-  }
-
-  static Future<void> _showAnnouncementToUser(ProductTour productTour) async {
-    ProductToursController.instance.isStepDisplayed = true;
-    final currentStep = productTour.steps[productTour.currentIndex]
-        as AnnouncementProductTourStep;
-    switch (currentStep.displayStyle) {
-      case DisplayStyle.bottomSheet:
-        await ProductTourHelperMethods.runAsBottomSheet(
-            contextToExplore, productTour);
-        break;
-      case DisplayStyle.page:
-        await ProductTourHelperMethods.runAsPage(contextToExplore, productTour);
-        break;
-      case DisplayStyle.popup:
-        await ProductTourHelperMethods.runAsPopup(
-            contextToExplore, productTour);
-        break;
-    }
-    ProductToursController.instance
-        .madeProgress(productTour, isAnnouncement: true);
-    if (productTour.isFinished) {
-      ProductToursController.instance.isStepDisplayed = false;
-      if (FlukkiController.instance.isInBuilderTestMode) {
-        FlukkiController.instance.turnOffTestMode();
-      }
-    } else {
-      Future.delayed(const Duration(milliseconds: 150)).then((value) {
-        ProductToursController.instance.isStepDisplayed = false;
-      });
-    }
-  }
-
-  bool wasMouseOutsideLastBox(PointerHoverEvent event) {
-    if (lastBox == null || lastOffset == null) {
-      return true;
-    }
-    if (event.position.dx > lastOffset!.dx &&
-        event.position.dx < lastOffset!.dx + lastBox!.size.width &&
-        event.position.dy > lastOffset!.dy &&
-        event.position.dy < lastOffset!.dy + lastBox!.size.height) {
-      return false;
-    }
-    return true;
   }
 }
 
@@ -1121,4 +840,70 @@ class _MyRecognizableWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => child;
+}
+
+class FlukkiWidgetsFlutterBinding extends WidgetsFlutterBinding {
+  /// initialization of Flukki binding, that is responsible for
+  /// monitoring widget tree
+  static WidgetsBinding ensureInitialized() {
+    FlukkiWidgetsFlutterBinding();
+    return WidgetsBinding.instance;
+  }
+
+  @override
+  BuildOwner? get buildOwner {
+    _buildOwner ??= _FlukkiBuildOwner(focusManager: FocusManager());
+    return _buildOwner!;
+  }
+
+  BuildOwner? _buildOwner;
+}
+
+class _FlukkiBuildOwner extends BuildOwner {
+  _FlukkiBuildOwner({super.focusManager});
+
+  final List<EnhancedElement> _dirty = [];
+
+  bool get _isBuilderMode => FlukkiController.instance.isInBuilderMode;
+
+  bool get _isTestMode => FlukkiController.instance.isInBuilderTestMode;
+
+  @override
+  void buildScope(Element context, [VoidCallback? callback]) {
+    super.buildScope(context, callback);
+    if (_isBuilderMode) {
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        BuilderWidgetsController.instance.clearNotMountedElements();
+        if (_isTestMode) {
+          UserWidgetsController.instance.performCheck();
+        }
+        for (EnhancedElement element in _dirty) {
+          BuilderWidgetsController.instance.addElement(element);
+        }
+        _dirty.clear();
+      });
+    } else {
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        UserWidgetsController.instance.performCheck();
+      });
+    }
+  }
+
+  @override
+  void scheduleBuildFor(Element element) {
+    final widgetName =
+        ProductTourMatcher.cropWidgetName(element.widget.toString());
+    if (_isBuilderMode) {
+      _dirty.add(EnhancedElement(element: element, widget: element.widget));
+    }
+
+    final ancestors = <String>[];
+    element.visitAncestorElements(
+        (e) => ProductTourMatcher.ancestorVisitor(e, ancestors));
+    ancestors.insert(0, widgetName);
+    UserWidgetsController.instance.addElement(PointerElement(
+        element: element, widgetTreeList: ancestors, widgetName: widgetName));
+
+    super.scheduleBuildFor(element);
+  }
 }

@@ -57,7 +57,7 @@ class ProductTour {
         'name': name
       };
 
-  bool hasMatchingProductTourSteps(List<String> widgetTree, int widgetIndex) {
+  bool hasMatchingProductTourSteps(List<String> widgetTree) {
     return _steps
         .where((step) =>
             step.index == currentIndex &&

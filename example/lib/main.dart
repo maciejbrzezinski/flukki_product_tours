@@ -2,7 +2,7 @@ import 'package:flukki_product_tours/flukki_product_tours.dart';
 import 'package:flutter/material.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  FlukkiWidgetsFlutterBinding.ensureInitialized();
 
   Flukki.instance.initialize(appName: 'Awesome app', key: 'xyz');
 

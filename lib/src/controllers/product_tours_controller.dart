@@ -58,15 +58,22 @@ class ProductToursController {
     isLoading = false;
   }
 
-  ProductTour? findMatchingProductTourStep(
-      List<String> widgetTree, int widgetIndex) {
+  ProductTour? findMatchingProductTourStep(List<String> widgetTree) {
     final matchingProductTours = _productTours.where((productTour) =>
-        productTour.hasMatchingProductTourSteps(widgetTree, widgetIndex) &&
+        productTour.hasMatchingProductTourSteps(widgetTree) &&
         !productTour.isFinished);
     if (matchingProductTours.isEmpty) {
       return null;
     }
     return matchingProductTours.first;
+  }
+
+  List<ProductTour> findActivePointerProductTours() {
+    return _productTours
+        .where((productTour) =>
+            productTour.currentStep is PointerProductTourStep &&
+            !productTour.isFinished)
+        .toList();
   }
 
   bool shouldCheckThisWidget(String widgetName) {
@@ -80,7 +87,7 @@ class ProductToursController {
           (element) => element.currentStep is AnnouncementProductTourStep);
 
   Future<void> madeProgress(ProductTour productTour,
-      {bool isAnnouncement = false}) async {
+      {bool isAnnouncement = false, required bool isTestMode}) async {
     if (isAnnouncement) {
       final currentStep = productTour.steps[productTour.currentIndex]
           as AnnouncementProductTourStep;
@@ -101,7 +108,9 @@ class ProductToursController {
       productTour.currentIndex++;
     }
     await LocalStorageController.saveProductTour(productTour);
-    StatisticsController.instance.sendStatistics(productTour: productTour);
+    if (!isTestMode) {
+      StatisticsController.instance.sendStatistics(productTour: productTour);
+    }
   }
 
   void replaceProductTour(ProductTour productTour) {
@@ -123,5 +132,7 @@ class ProductToursController {
   Future<void> skipAll(ProductTour productTour) async {
     productTour.skippedIndex = productTour.currentIndex;
     await LocalStorageController.saveProductTour(productTour);
+    await StatisticsController.instance
+        .sendStatistics(productTour: productTour);
   }
 }

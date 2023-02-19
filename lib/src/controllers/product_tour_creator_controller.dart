@@ -27,11 +27,13 @@ class ProductTourCreatorController {
   PointerProductTourStep addPointer(String caption,
       ElementWithWidgetTree elementWithWidgetTree, PointerAction action) {
     return _productTour.addStep(PointerProductTourStep(
-        _productTour.stepsCount,
-        caption,
-        elementWithWidgetTree.widgetTree.toString(),
-        action,
-        elementWithWidgetTree.index)) as PointerProductTourStep;
+            _productTour.stepsCount,
+            caption,
+            elementWithWidgetTree.widgetTree.toString(),
+            action,
+            elementWithWidgetTree.index,
+            widgetName: elementWithWidgetTree.widgetName))
+        as PointerProductTourStep;
   }
 
   AnnouncementProductTourStep addAnnouncement() {
@@ -78,9 +80,7 @@ class ProductTourCreatorController {
         }
       }
     }
-    // if(_editorRefresher!=null) {
     _editorRefresher!();
-    // }
   }
 
   void switchWidgetIndex(

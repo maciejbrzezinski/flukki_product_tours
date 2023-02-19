@@ -35,12 +35,14 @@ class PointerProductTourStep extends ProductTourStep {
   String widgetKey;
   late String? _action;
   int widgetIndex;
+  String widgetName;
 
   PointerAction get pointerAction =>
       PointerAction.values.firstWhere((element) => element.name == _action);
 
   PointerProductTourStep(int index, this.caption, this.widgetKey,
-      PointerAction action, this.widgetIndex)
+      PointerAction action, this.widgetIndex,
+      {required this.widgetName})
       : super(index) {
     _action = action.name;
   }
@@ -50,6 +52,7 @@ class PointerProductTourStep extends ProductTourStep {
         widgetKey = json['widgetKey'],
         _action = json['action'],
         widgetIndex = json['widgetIndex'] ?? 0,
+        widgetName = json['widgetName'],
         super.fromJson(json);
 
   @override
@@ -58,7 +61,8 @@ class PointerProductTourStep extends ProductTourStep {
       caption,
       widgetKey,
       PointerAction.values.firstWhere((element) => element.name == _action),
-      widgetIndex);
+      widgetIndex,
+      widgetName: widgetName);
 
   @override
   Map<String, dynamic> toJson() => {
@@ -68,6 +72,7 @@ class PointerProductTourStep extends ProductTourStep {
         'action': _action,
         'type': type,
         'widgetIndex': widgetIndex,
+        'widgetName': widgetName
       };
 }
 
@@ -133,6 +138,7 @@ enum DisplayStyle {
   popup('Popup');
 
   const DisplayStyle(this.name);
+
   final String name;
 }
 
