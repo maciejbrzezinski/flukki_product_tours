@@ -42,6 +42,7 @@ class FlukkiApi {
     } catch (e) {
       debugPrint(e.toString());
     }
+    return null;
   }
 
   static Future<List<ProductTour>?> fetchProductTours(
@@ -74,6 +75,7 @@ class FlukkiApi {
     } catch (e) {
       debugPrint(e.toString());
     }
+    return null;
   }
 
   static removeProductTour(ProductTour productTour) async {
@@ -116,6 +118,7 @@ class FlukkiApi {
     } catch (e) {
       debugPrint(e.toString());
     }
+    return null;
   }
 
   static Future<String?> createDeviceId({required String apiKey}) async {
@@ -136,6 +139,7 @@ class FlukkiApi {
     } catch (e) {
       debugPrint(e.toString());
     }
+    return null;
   }
 
   static updateDeviceId(
