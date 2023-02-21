@@ -445,14 +445,17 @@ class _EmptyProductToursWidget extends StatelessWidget {
                       'You have no product tours yet',
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
-                    Row(
-                      children: const [
-                        Expanded(
-                          child: Text(
-                            'Product tour builder is inside of your app and after save, the newly created product tour will be delivered to all app users',
+                    Expanded(
+                      child: Row(
+                        children: const [
+                          Expanded(
+                            child: Text(
+                              'Product tour builder is inside of your app and after save, the newly created product tour will be delivered to all app users',
+                              overflow: TextOverflow.fade,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                     ElevatedButton.icon(
                       onPressed: createNewProductTour,
@@ -614,43 +617,51 @@ class _ProductTourEditorState extends State<_ProductTourEditor> {
                   const SizedBox(
                     width: 16,
                   ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Tooltip(
-                        message: widget.controller.productTour.steps.isEmpty
-                            ? 'Add some steps to be able to save product tour'
-                            : '',
-                        child: ElevatedButton.icon(
-                          onPressed: widget.controller.productTour.steps.isEmpty
-                              ? null
-                              : () {
-                                  if (widget.controller.productTour.name ==
-                                          null ||
-                                      widget.controller.productTour.name!
-                                          .isEmpty) {
-                                    _shoeNameDialog(context);
-                                  } else {
-                                    widget.saveProductTour();
-                                  }
-                                },
-                          label: const Text('Save'),
-                          icon: const Icon(Icons.save),
-                          style: FlukkiContants.accentButtonStyle,
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Expanded(
+                          child: Tooltip(
+                            message: widget.controller.productTour.steps.isEmpty
+                                ? 'Add some steps to be able to save product tour'
+                                : '',
+                            child: ElevatedButton.icon(
+                              onPressed: widget.controller.productTour.steps.isEmpty
+                                  ? null
+                                  : () {
+                                      if (widget.controller.productTour.name ==
+                                              null ||
+                                          widget.controller.productTour.name!
+                                              .isEmpty) {
+                                        _shoeNameDialog(context);
+                                      } else {
+                                        widget.saveProductTour();
+                                      }
+                                    },
+                              label: const Text('Save'),
+                              icon: const Icon(Icons.save),
+                              style: FlukkiContants.accentButtonStyle,
+                            ),
+                          ),
                         ),
-                      ),
-                      ElevatedButton(
-                          onPressed: () => FlukkiController.instance
-                              .turnOnTestMode(widget.controller.productTour),
-                          style: FlukkiContants.regularButtonStyle,
-                          child: const Text('Test this product tour')),
-                      ElevatedButton(
-                        onPressed: () => widget.finishEditingWithoutSaving(),
-                        style: FlukkiContants.regularButtonStyle,
-                        child: const Text('Cancel'),
-                      ),
-                    ],
+                        Expanded(
+                          child: ElevatedButton(
+                              onPressed: () => FlukkiController.instance
+                                  .turnOnTestMode(widget.controller.productTour),
+                              style: FlukkiContants.regularButtonStyle,
+                              child: const Text('Test this product tour')),
+                        ),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () => widget.finishEditingWithoutSaving(),
+                            style: FlukkiContants.regularButtonStyle,
+                            child: const Text('Cancel'),
+                          ),
+                        ),
+                      ],
+                    ),
                   )
                 ],
               ),

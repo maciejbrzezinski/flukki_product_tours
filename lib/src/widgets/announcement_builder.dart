@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../controllers/product_tour_creator_controller.dart';
@@ -21,11 +22,12 @@ class _AnnouncementBuilderState extends State<AnnouncementBuilder> {
     widget.controller.registerAnnouncementFormRefresher(() => setState(() {}));
     return Row(
       children: [
-        Expanded(
-          child: AnnouncementStepPreview(
-            step: widget.currentStep,
+        if (kIsWeb)
+          Expanded(
+            child: AnnouncementStepPreview(
+              step: widget.currentStep,
+            ),
           ),
-        ),
         Expanded(
             child: RegularPageEditForm(
                 currentStep: widget.currentStep,
