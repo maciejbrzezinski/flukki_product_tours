@@ -10,8 +10,8 @@ environment:
   flutter: ">=2.5.0"
 
 dependencies:
-  dio: ^5.0.0
-  shared_preferences: ^2.0.17
+  dio: ^4.0.0
+  shared_preferences: ^2.0.1
   flutter_hsvcolor_picker: ^1.2.3
   file_picker: ^5.2.5
   flutter_dropzone: ^3.0.5

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class FlukkiContants {
@@ -33,25 +34,25 @@ class FlukkiContants {
           RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(borderRadius))),
       shadowColor: const MaterialStatePropertyAll(Colors.transparent),
-      padding: const MaterialStatePropertyAll(EdgeInsets.all(20)),
+      padding: kIsWeb ? const MaterialStatePropertyAll(EdgeInsets.all(20)) : const MaterialStatePropertyAll(EdgeInsets.all(8)),
       backgroundColor: MaterialStateProperty.resolveWith((state) =>
           state.contains(MaterialState.hovered)
               ? accentButtonBackgroundColorHover
               : accentButtonBackgroundColor),
       foregroundColor: const MaterialStatePropertyAll(accentButtonTextColor));
 
-  static final ButtonStyle regularButtonStyle = ButtonStyle(
-    shadowColor: const MaterialStatePropertyAll(Colors.transparent),
-    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-        RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(borderRadius))),
-    padding: const MaterialStatePropertyAll(EdgeInsets.all(20)),
-    backgroundColor: MaterialStateProperty.resolveWith((state) =>
-        state.contains(MaterialState.hovered)
-            ? regularButtonBackgroundColorHover
-            : regularButtonBackgroundColor),
-    foregroundColor: const MaterialStatePropertyAll(regularButtonTextColor),
-  );
+  static ButtonStyle get regularButtonStyle => ButtonStyle(
+        shadowColor: const MaterialStatePropertyAll(Colors.transparent),
+        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+            RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(borderRadius))),
+        padding: kIsWeb ? const MaterialStatePropertyAll(EdgeInsets.all(20)) : const MaterialStatePropertyAll(EdgeInsets.all(8)),
+        backgroundColor: MaterialStateProperty.resolveWith((state) =>
+            state.contains(MaterialState.hovered)
+                ? regularButtonBackgroundColorHover
+                : regularButtonBackgroundColor),
+        foregroundColor: const MaterialStatePropertyAll(regularButtonTextColor),
+      );
 
   static final ButtonStyle greyButtonStyle = ButtonStyle(
     shadowColor: const MaterialStatePropertyAll(Colors.transparent),

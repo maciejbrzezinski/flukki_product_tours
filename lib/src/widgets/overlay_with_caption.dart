@@ -28,7 +28,10 @@ class OverlayWithCaption extends StatelessWidget {
     if (leftPadding < 0) {
       leftPadding = position.dx + (box.size.width / 2) - 150;
     }
-    var topPadding = position.dy + box.size.height;
+    if (leftPadding + 300 > screenSize.width) {
+      leftPadding = screenSize.width - 300;
+    }
+    var topPadding = position.dy + box.size.height + 16;
     if (topPadding + 250 > screenSize.height) {
       topPadding -= 250;
     }

@@ -93,9 +93,12 @@ class _PointerBuilderOverlayState extends State<PointerBuilderOverlay> {
     if (leftPadding < 0) {
       leftPadding = widget.position.dx + (widget.box.size.width / 2) - 150;
     }
+    if (leftPadding + 300 > screenSize.width) {
+      leftPadding = screenSize.width - 300;
+    }
     var topPadding = widget.position.dy + widget.box.size.height;
-    if (topPadding + 250 > screenSize.height) {
-      topPadding -= 250;
+    if (topPadding + 300 > screenSize.height) {
+      topPadding -= 300;
     }
     showDialog(
         context: context,
