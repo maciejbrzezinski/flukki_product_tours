@@ -69,13 +69,26 @@ class BuilderWidgetsController {
           (e) => ProductTourMatcher.ancestorVisitor(e, ancestorsList));
       ancestorsList.insert(0, widgetName);
 
+      final elementsWithTheSameWidgetTree =
+          _elementsPerWidgetType[widgetName]!.where((element) {
+        if (element == bestMatch) return false;
+
+        List<String> ancestors = [];
+        element.visitAncestorElements(
+            (e) => ProductTourMatcher.ancestorVisitor(e, ancestors));
+        ancestors.insert(
+            0, ProductTourMatcher.cropWidgetName(element.widget.toString()));
+
+        if (ancestors.toString() == ancestorsList.toString()) return true;
+        return false;
+      }).toList();
+
       return ElementWithWidgetTree(
           widgetName:
               ProductTourMatcher.cropWidgetName(bestMatch.widget.toString()),
           element: bestMatch,
           widgetTree: ancestorsList,
-          index:
-              _elementsPerWidgetType[widgetName]!.toList().indexOf(bestMatch));
+          index: elementsWithTheSameWidgetTree.indexOf(bestMatch));
     } catch (_) {
       return null;
     }
