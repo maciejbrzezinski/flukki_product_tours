@@ -159,8 +159,8 @@ class OverlayWithCaption extends StatelessWidget {
   }
 
   _skipAll() async {
-    await ProductToursController.instance.skipAll(productTour);
     closeOverlay();
+    await ProductToursController.instance.skipAll(productTour);
     ProductToursController.instance.isStepDisplayed = false;
     if (FlukkiController.instance.isInBuilderTestMode) {
       FlukkiController.instance.turnOffTestMode();
