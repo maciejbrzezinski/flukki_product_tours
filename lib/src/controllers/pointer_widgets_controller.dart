@@ -103,8 +103,8 @@ class UserWidgetsController {
         await ProductTourHelperMethods.runAsPopup(context, productTour);
         break;
     }
-    await ProductToursController.instance
-        .madeProgress(productTour, isAnnouncement: true,
+    await ProductToursController.instance.madeProgress(productTour,
+        isAnnouncement: true,
         isTestMode: FlukkiController.instance.isInBuilderTestMode);
     if (productTour.isFinished) {
       ProductToursController.instance.isStepDisplayed = false;

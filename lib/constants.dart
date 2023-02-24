@@ -34,7 +34,9 @@ class FlukkiConstants {
           RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(borderRadius))),
       shadowColor: const MaterialStatePropertyAll(Colors.transparent),
-      padding: kIsWeb ? const MaterialStatePropertyAll(EdgeInsets.all(20)) : const MaterialStatePropertyAll(EdgeInsets.all(8)),
+      padding: kIsWeb
+          ? const MaterialStatePropertyAll(EdgeInsets.all(20))
+          : const MaterialStatePropertyAll(EdgeInsets.all(8)),
       backgroundColor: MaterialStateProperty.resolveWith((state) =>
           state.contains(MaterialState.hovered)
               ? accentButtonBackgroundColorHover
@@ -46,7 +48,9 @@ class FlukkiConstants {
         shape: MaterialStateProperty.all<RoundedRectangleBorder>(
             RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(borderRadius))),
-        padding: kIsWeb ? const MaterialStatePropertyAll(EdgeInsets.all(20)) : const MaterialStatePropertyAll(EdgeInsets.all(8)),
+        padding: kIsWeb
+            ? const MaterialStatePropertyAll(EdgeInsets.all(20))
+            : const MaterialStatePropertyAll(EdgeInsets.all(8)),
         backgroundColor: MaterialStateProperty.resolveWith((state) =>
             state.contains(MaterialState.hovered)
                 ? regularButtonBackgroundColorHover

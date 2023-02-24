@@ -545,8 +545,8 @@ class _ProductTourEditorState extends State<_ProductTourEditor> {
                                   ? InkWell(
                                       onTap: widget.turnOffPointer,
                                       child: Container(
-                                        color:
-                                            FlukkiConstants.errorBackgroundColor,
+                                        color: FlukkiConstants
+                                            .errorBackgroundColor,
                                         child: Column(
                                           mainAxisSize: MainAxisSize.min,
                                           mainAxisAlignment:
@@ -555,8 +555,8 @@ class _ProductTourEditorState extends State<_ProductTourEditor> {
                                             Icon(
                                               Icons.close,
                                               size: 32,
-                                              color:
-                                                  FlukkiConstants.errorTextColor,
+                                              color: FlukkiConstants
+                                                  .errorTextColor,
                                             ),
                                             Text(
                                               'Cancel',
@@ -628,7 +628,8 @@ class _ProductTourEditorState extends State<_ProductTourEditor> {
                                 ? 'Add some steps to be able to save product tour'
                                 : '',
                             child: ElevatedButton.icon(
-                              onPressed: widget.controller.productTour.steps.isEmpty
+                              onPressed: widget
+                                      .controller.productTour.steps.isEmpty
                                   ? null
                                   : () {
                                       if (widget.controller.productTour.name ==
@@ -649,13 +650,15 @@ class _ProductTourEditorState extends State<_ProductTourEditor> {
                         Expanded(
                           child: ElevatedButton(
                               onPressed: () => FlukkiController.instance
-                                  .turnOnTestMode(widget.controller.productTour),
+                                  .turnOnTestMode(
+                                      widget.controller.productTour),
                               style: FlukkiConstants.regularButtonStyle,
                               child: const Text('Test this product tour')),
                         ),
                         Expanded(
                           child: ElevatedButton(
-                            onPressed: () => widget.finishEditingWithoutSaving(),
+                            onPressed: () =>
+                                widget.finishEditingWithoutSaving(),
                             style: FlukkiConstants.regularButtonStyle,
                             child: const Text('Cancel'),
                           ),
