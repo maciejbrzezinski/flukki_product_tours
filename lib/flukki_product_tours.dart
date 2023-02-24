@@ -231,7 +231,7 @@ class _ListOfProductToursState extends State<_ListOfProductTours> {
   Widget build(BuildContext context) {
     final productTours = ProductToursController.instance.productTours;
     return Container(
-      color: FlukkiContants.backgroundColor,
+      color: FlukkiConstants.backgroundColor,
       height: 200,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 24),
@@ -261,9 +261,9 @@ class _ListOfProductToursState extends State<_ListOfProductTours> {
                                     : 16.0),
                             child: Container(
                               decoration: BoxDecoration(
-                                  color: FlukkiContants.cardColor,
+                                  color: FlukkiConstants.cardColor,
                                   borderRadius: BorderRadius.circular(
-                                      FlukkiContants.borderRadius)),
+                                      FlukkiConstants.borderRadius)),
                               width: 150,
                               height: 150,
                               child: Padding(
@@ -301,7 +301,7 @@ class _ListOfProductToursState extends State<_ListOfProductTours> {
                                           }
                                         },
                                         style:
-                                            FlukkiContants.regularButtonStyle,
+                                            FlukkiConstants.regularButtonStyle,
                                         child: const Text('Delete'),
                                       ),
                                   ],
@@ -324,14 +324,14 @@ class _ListOfProductToursState extends State<_ListOfProductTours> {
                       onPressed: widget.createNewProductTour,
                       label: const Text('Create new'),
                       icon: const Icon(Icons.add),
-                      style: FlukkiContants.accentButtonStyle,
+                      style: FlukkiConstants.accentButtonStyle,
                     ),
                   ElevatedButton(
                       onHover: (b) {},
                       onPressed: () {
                         FlukkiController.instance.turnOffBuilder();
                       },
-                      style: FlukkiContants.regularButtonStyle,
+                      style: FlukkiConstants.regularButtonStyle,
                       child: const Text('Close builder')),
                 ],
               ),
@@ -363,7 +363,7 @@ class _EmptyProductToursWidget extends StatelessWidget {
                   width: 220,
                   // height: 150,
                   decoration: BoxDecoration(
-                    color: FlukkiContants.cardColor,
+                    color: FlukkiConstants.cardColor,
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
@@ -374,7 +374,7 @@ class _EmptyProductToursWidget extends StatelessWidget {
                     width: 160,
                     height: 16,
                     decoration: BoxDecoration(
-                      color: FlukkiContants.cardPlaceholderColor,
+                      color: FlukkiConstants.cardPlaceholderColor,
                       borderRadius: BorderRadius.circular(16),
                     ),
                   ),
@@ -386,7 +386,7 @@ class _EmptyProductToursWidget extends StatelessWidget {
                     width: 32,
                     height: 4,
                     decoration: BoxDecoration(
-                      color: FlukkiContants.cardPlaceholderColor,
+                      color: FlukkiConstants.cardPlaceholderColor,
                       borderRadius: BorderRadius.circular(16),
                     ),
                   ),
@@ -398,7 +398,7 @@ class _EmptyProductToursWidget extends StatelessWidget {
                     width: 32,
                     height: 4,
                     decoration: BoxDecoration(
-                      color: FlukkiContants.cardPlaceholderColor,
+                      color: FlukkiConstants.cardPlaceholderColor,
                       borderRadius: BorderRadius.circular(16),
                     ),
                   ),
@@ -410,7 +410,7 @@ class _EmptyProductToursWidget extends StatelessWidget {
                     width: 48,
                     height: 8,
                     decoration: BoxDecoration(
-                      color: FlukkiContants.cardPlaceholderColor,
+                      color: FlukkiConstants.cardPlaceholderColor,
                       borderRadius: BorderRadius.circular(16),
                     ),
                   ),
@@ -422,7 +422,7 @@ class _EmptyProductToursWidget extends StatelessWidget {
                     width: 16,
                     height: 16,
                     decoration: BoxDecoration(
-                      color: FlukkiContants.cardPlaceholderColor,
+                      color: FlukkiConstants.cardPlaceholderColor,
                       borderRadius: BorderRadius.circular(360),
                     ),
                   ),
@@ -461,7 +461,7 @@ class _EmptyProductToursWidget extends StatelessWidget {
                       onPressed: createNewProductTour,
                       label: const Text('Create new'),
                       icon: const Icon(Icons.add),
-                      style: FlukkiContants.accentButtonStyle,
+                      style: FlukkiConstants.accentButtonStyle,
                     )
                   ],
                 ),
@@ -510,7 +510,7 @@ class _ProductTourEditorState extends State<_ProductTourEditor> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: FlukkiContants.backgroundColor,
+      color: FlukkiConstants.backgroundColor,
       height: 200,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 24),
@@ -521,7 +521,7 @@ class _ProductTourEditorState extends State<_ProductTourEditor> {
                     height: 50,
                     child: CircularProgressIndicator(
                       strokeWidth: 3,
-                      color: FlukkiContants.accentButtonBackgroundColor,
+                      color: FlukkiConstants.accentButtonBackgroundColor,
                     )),
               )
             : Row(
@@ -546,7 +546,7 @@ class _ProductTourEditorState extends State<_ProductTourEditor> {
                                       onTap: widget.turnOffPointer,
                                       child: Container(
                                         color:
-                                            FlukkiContants.errorBackgroundColor,
+                                            FlukkiConstants.errorBackgroundColor,
                                         child: Column(
                                           mainAxisSize: MainAxisSize.min,
                                           mainAxisAlignment:
@@ -556,12 +556,12 @@ class _ProductTourEditorState extends State<_ProductTourEditor> {
                                               Icons.close,
                                               size: 32,
                                               color:
-                                                  FlukkiContants.errorTextColor,
+                                                  FlukkiConstants.errorTextColor,
                                             ),
                                             Text(
                                               'Cancel',
                                               style: TextStyle(
-                                                color: FlukkiContants
+                                                color: FlukkiConstants
                                                     .errorTextColor,
                                               ),
                                             )
@@ -576,7 +576,7 @@ class _ProductTourEditorState extends State<_ProductTourEditor> {
                                         Expanded(
                                           child: ElevatedButton(
                                               onPressed: widget.turnOnPointer,
-                                              style: FlukkiContants
+                                              style: FlukkiConstants
                                                   .regularButtonStyle,
                                               child: const Text(
                                                 'Add pointer',
@@ -590,7 +590,7 @@ class _ProductTourEditorState extends State<_ProductTourEditor> {
                                           child: ElevatedButton(
                                               onPressed:
                                                   _showAnnouncementBuilder,
-                                              style: FlukkiContants
+                                              style: FlukkiConstants
                                                   .regularButtonStyle,
                                               child: const Text(
                                                 'Add announcement',
@@ -642,7 +642,7 @@ class _ProductTourEditorState extends State<_ProductTourEditor> {
                                     },
                               label: const Text('Save'),
                               icon: const Icon(Icons.save),
-                              style: FlukkiContants.accentButtonStyle,
+                              style: FlukkiConstants.accentButtonStyle,
                             ),
                           ),
                         ),
@@ -650,13 +650,13 @@ class _ProductTourEditorState extends State<_ProductTourEditor> {
                           child: ElevatedButton(
                               onPressed: () => FlukkiController.instance
                                   .turnOnTestMode(widget.controller.productTour),
-                              style: FlukkiContants.regularButtonStyle,
+                              style: FlukkiConstants.regularButtonStyle,
                               child: const Text('Test this product tour')),
                         ),
                         Expanded(
                           child: ElevatedButton(
                             onPressed: () => widget.finishEditingWithoutSaving(),
-                            style: FlukkiContants.regularButtonStyle,
+                            style: FlukkiConstants.regularButtonStyle,
                             child: const Text('Cancel'),
                           ),
                         ),
@@ -693,7 +693,7 @@ class _ProductTourEditorState extends State<_ProductTourEditor> {
                           validator: (value) => value == null || value.isEmpty
                               ? 'Can\'t be empty'
                               : null,
-                          decoration: FlukkiContants.textInputDecoration(
+                          decoration: FlukkiConstants.textInputDecoration(
                               name: 'Product tour\'s name'),
                         ),
                       ),
@@ -784,7 +784,7 @@ class _ProductTourSteps extends StatelessWidget {
                             ? 'You can\'t remove the last step'
                             : '',
                         child: ElevatedButton(
-                            style: FlukkiContants.regularButtonStyle,
+                            style: FlukkiConstants.regularButtonStyle,
                             onPressed: controller.productTour.steps.length == 1
                                 ? null
                                 : () {
@@ -814,7 +814,7 @@ class _ProductTourSteps extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 32.0),
                       child: ElevatedButton(
-                          style: FlukkiContants.regularButtonStyle,
+                          style: FlukkiConstants.regularButtonStyle,
                           onPressed: () {
                             controller.removeStep(step);
                             setState();

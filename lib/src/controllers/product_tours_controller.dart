@@ -31,7 +31,7 @@ class ProductToursController {
     final sharedPreferences = await SharedPreferences.getInstance();
 
     var localProductTours = (sharedPreferences
-                .getStringList(FlukkiContants.productToursPreferencesKey) ??
+                .getStringList(FlukkiConstants.productToursPreferencesKey) ??
             [])
         .map((e) => ProductTour.fromJson(jsonDecode(e), callbacks))
         .toList();
@@ -47,7 +47,7 @@ class ProductToursController {
         return remoteProductTour;
       }).toList();
       await sharedPreferences.setStringList(
-          FlukkiContants.productToursPreferencesKey,
+          FlukkiConstants.productToursPreferencesKey,
           remoteProductTours.map((e) => jsonEncode(e.toJson())).toList());
       _productTours = remoteProductTours;
     } else if (remoteProductTours == null && localProductTours.isNotEmpty) {

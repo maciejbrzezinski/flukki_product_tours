@@ -9,7 +9,7 @@ class LocalStorageController {
   static Future<void> saveProductTour(ProductTour productTour) async {
     final preferences = await SharedPreferences.getInstance();
     var savedProductTours =
-        preferences.getStringList(FlukkiContants.productToursPreferencesKey) ??
+        preferences.getStringList(FlukkiConstants.productToursPreferencesKey) ??
             [];
     var productTourJson = productTour.toJson();
     var asString = jsonEncode(productTourJson);
@@ -25,6 +25,6 @@ class LocalStorageController {
       savedProductTours.add(asString);
     }
     await preferences.setStringList(
-        FlukkiContants.productToursPreferencesKey, savedProductTours);
+        FlukkiConstants.productToursPreferencesKey, savedProductTours);
   }
 }

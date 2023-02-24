@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-class FlukkiContants {
+class FlukkiConstants {
   static const productToursPreferencesKey = '_flukkiProductTours';
 
   static const double borderRadius = 4.0;
