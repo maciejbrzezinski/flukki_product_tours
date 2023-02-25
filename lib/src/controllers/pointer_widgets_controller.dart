@@ -59,7 +59,8 @@ class UserWidgetsController {
       final elements = _pointerElementsPerWidget[currentStep.widgetName]
               ?[currentStep.widgetKey] ??
           [];
-      if (elements.length - 1 >= currentStep.widgetIndex) {
+      if (currentStep.widgetIndex >= 0 &&
+          elements.length - 1 >= currentStep.widgetIndex) {
         matchingElement = elements[currentStep.widgetIndex];
         return true;
       }

@@ -68,20 +68,28 @@ class BuilderWidgetsController {
       bestMatch.visitAncestorElements(
           (e) => ProductTourMatcher.ancestorVisitor(e, ancestorsList));
       ancestorsList.insert(0, widgetName);
+      List<Element> toDelete = [];
+      List<Element> elementsWithTheSameWidgetTree = [];
+      try {
+        elementsWithTheSameWidgetTree =
+            _elementsPerWidgetType[widgetName]!.where((element) {
+          if (!element.mounted) {
+            toDelete.add(element);
+            return false;
+          }
+          if (element == bestMatch) return true;
 
-      final elementsWithTheSameWidgetTree =
-          _elementsPerWidgetType[widgetName]!.where((element) {
-        if (element == bestMatch) return false;
+          List<String> ancestors = [];
+          element.visitAncestorElements(
+              (e) => ProductTourMatcher.ancestorVisitor(e, ancestors));
+          ancestors.insert(
+              0, ProductTourMatcher.cropWidgetName(element.widget.toString()));
 
-        List<String> ancestors = [];
-        element.visitAncestorElements(
-            (e) => ProductTourMatcher.ancestorVisitor(e, ancestors));
-        ancestors.insert(
-            0, ProductTourMatcher.cropWidgetName(element.widget.toString()));
-
-        if (ancestors.toString() == ancestorsList.toString()) return true;
-        return false;
-      }).toList();
+          if (ancestors.toString() == ancestorsList.toString()) return true;
+          return false;
+        }).toList();
+        _elementsPerWidgetType[widgetName]!.removeAll(toDelete);
+      } catch (_) {}
 
       return ElementWithWidgetTree(
           widgetName:
