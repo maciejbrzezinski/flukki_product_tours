@@ -866,9 +866,12 @@ class FlukkiWidgetsFlutterBinding extends WidgetsFlutterBinding {
 
   @override
   BuildOwner? get buildOwner {
-    _buildOwner ??= _FlukkiBuildOwner(focusManager: FocusManager());
+    _buildOwner ??=
+        _FlukkiBuildOwner(focusManager: superBuildOwner?.focusManager);
     return _buildOwner!;
   }
+
+  BuildOwner? get superBuildOwner => super.buildOwner;
 
   BuildOwner? _buildOwner;
 }
