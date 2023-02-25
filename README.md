@@ -19,6 +19,7 @@ This is the very beginning of our story, and please be aware, that you will poss
 - Plugin is fragile for widget tree changes. For example you will wrap your pointed widget with Center, or some other widget and plugin will stop to recognize the original widget.
 - On web you should use CanvasKit renderer instead of the HTML one, because overlays were not working properly there
 - Not the best visual experience yet - we are open for feedback and suggestions
+- Performance is still not the best
 
 ### Advantages
 After creating an account at https://www.flukki.com/ you will be able to get your **key** (it will be needed during configuration).
