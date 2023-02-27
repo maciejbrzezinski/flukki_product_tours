@@ -32,12 +32,15 @@ Flukki will help you in:
 1. Add Flukki to you project
 ```yaml 
 dependencies:
-  flukki_product_tours: ^1.0.0
+  flukki_product_tours: ^1.1.0
 ```
-2. Initialize the Flukki widgets binding at the very beginning of your main function
-```dart
-void main() {
-  FlukkiWidgetsFlutterBinding.ensureInitialized()
+2. Add environment variable to your Flutter run method
+```bash
+--dart-define=flutter.memory_allocations=true
+```
+After change you should have something like 
+```bash
+flutter run --release --dart-define=flutter.memory_allocations=true
 ```
 3. Initialize the plugin
 ```dart

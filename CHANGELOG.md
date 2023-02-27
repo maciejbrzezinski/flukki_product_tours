@@ -1,3 +1,7 @@
+## 1.1.0
+
+* Changed way of initializing plugin
+
 ## 1.0.2
 
 * Improved focus manager behavior
