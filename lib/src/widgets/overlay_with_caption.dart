@@ -1,6 +1,6 @@
-import 'package:flukki_product_tours/src/controllers/pointer_widgets_controller.dart';
 import 'package:flutter/material.dart';
 
+import '../controllers/context_controller.dart';
 import '../controllers/flukki_controller.dart';
 import '../controllers/product_tours_controller.dart';
 import '../models/product_tour_model.dart';
@@ -118,7 +118,7 @@ class OverlayWithCaption extends StatelessWidget {
     } else {
       Future.delayed(const Duration(milliseconds: 300)).then((value) {
         ProductToursController.instance.isStepDisplayed = false;
-        UserWidgetsController.instance.performCheck();
+        ContextController.instance.performCheck();
       });
     }
   }

@@ -18,8 +18,6 @@ One day I was thinking, what cool Flutter project I can create. And here we are 
 This is the very beginning of our story, and please be aware, that you will possibly experience:
 - Plugin is fragile for widget tree changes. For example you will wrap your pointed widget with Center, or some other widget and plugin will stop to recognize the original widget.
 - On web you should use CanvasKit renderer instead of the HTML one, because overlays were not working properly there
-- Not the best visual experience yet - we are open for feedback and suggestions
-- Performance is still not the best
 
 ### Advantages
 After creating an account at https://www.flukki.com/ you will be able to get your **key** (it will be needed during configuration).
@@ -27,17 +25,21 @@ Flukki will help you in:
 - building product tours without coding, inside of your app. You will achieve thd best UX by building a product tour on web
 - measure stats, like skip rate or success rate
 - delivering new and updated product tours to your users without app store deploy
+- product tours are triggered by the proper widget appear on the screen
 
 ### Configuration
 1. Add Flukki to you project
 ```yaml 
 dependencies:
-  flukki_product_tours: ^1.0.0
+  flukki_product_tours: ^1.1.0
 ```
-2. Initialize the Flukki widgets binding at the very beginning of your main function
-```dart
-void main() {
-  FlukkiWidgetsFlutterBinding.ensureInitialized()
+2. Add environment variable to your Flutter run method
+```bash
+--dart-define=flutter.memory_allocations=true
+```
+After change you should have something like 
+```bash
+flutter run --release --dart-define=flutter.memory_allocations=true
 ```
 3. Initialize the plugin
 ```dart

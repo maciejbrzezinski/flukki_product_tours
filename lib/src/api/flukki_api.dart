@@ -59,9 +59,10 @@ class FlukkiApi {
           '${apiAddressPrefix}getProductTours?key=$apiKey&appName=$appName',
           data: {'deviceId': deviceId});
       return ProductTour.fromJsonList(
-          List<Map<String, dynamic>>.from(response.data['result']
-              .map((e) => jsonDecode(e['productTour']))
-              .toList()),
+          List<Map<String, dynamic>>.from(
+              response.data['result'].where((e) => e != null).toList().map((e) {
+            return jsonDecode(e['productTour']);
+          }).toList()),
           callbacks);
     } on DioError catch (e) {
       if (e.response?.statusCode == 402) {
