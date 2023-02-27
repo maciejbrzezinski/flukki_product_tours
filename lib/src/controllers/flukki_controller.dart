@@ -1,9 +1,8 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
-
 import '../helpers/device_id_controller.dart';
 import '../models/product_tour_model.dart';
+import 'context_controller.dart';
 import 'product_tours_controller.dart';
 import 'statistics_controller.dart';
 import 'test_product_tour_controller.dart';
@@ -41,7 +40,7 @@ class FlukkiController {
     await DeviceIdController.instance.init(key);
     await ProductToursController.instance
         .initialize(this.callbacks, DeviceIdController.instance.deviceId);
-    WidgetsBinding.instance.performReassemble();
+    ContextController.instance.performCheck();
     StatisticsController.instance.sendStatistics();
   }
 
@@ -54,6 +53,7 @@ class FlukkiController {
   Future<void> turnOnTestMode(ProductTour productTour) async {
     testProductTourController = TestProductTourController(productTour);
     _isInBuilderTestMode = true;
+    ContextController.instance.performCheck();
   }
 
   Future<void> turnOffTestMode() async {
@@ -69,8 +69,5 @@ class FlukkiController {
   void turnOnBuilder() {
     _isInBuilderMode = true;
     _onCreationModeChanged.add(_isInBuilderMode);
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      WidgetsBinding.instance.performReassemble();
-    });
   }
 }

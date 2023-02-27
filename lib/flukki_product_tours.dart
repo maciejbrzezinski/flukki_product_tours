@@ -1,15 +1,14 @@
 import 'dart:async';
-import 'package:flutter/gestures.dart';
+import 'package:flukki_product_tours/src/controllers/context_controller.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'constants.dart';
 import 'src/controllers/flukki_controller.dart';
-import 'src/controllers/pointer_widgets_controller.dart';
 import 'src/controllers/product_tour_creator_controller.dart';
 
 import 'src/controllers/product_tours_controller.dart';
-import 'src/controllers/widgets_on_screen_controller.dart';
-import 'src/helpers/product_tour_matcher.dart';
 import 'src/models/product_tour_model.dart';
 import 'src/models/product_tour_step_model.dart';
 import 'src/widgets/announcement_builder.dart';
@@ -30,6 +29,22 @@ class Flukki {
       {required String key,
       required String appName,
       Map<String, void Function()>? callbacks}) async {
+    assert(const bool.fromEnvironment('flutter.memory_allocations') == true,
+        'Environment variable not set. Add <flutter.memory_allocations=true> environment variable. Your run method should look like this "--dart-define=flutter.memory_allocations=true"');
+    MemoryAllocations.instance.addListener((event) {
+      if (event.object is Element) {
+        if (event is ObjectCreated) {
+          ContextController.instance.addElement(event.object as Element);
+        } else if (event is ObjectDisposed) {
+          ContextController.instance.removeElement(event.object as Element);
+        }
+      }
+    });
+    WidgetsBinding.instance.addPersistentFrameCallback((timeStamp) {
+      if (ContextController.instance.flushAwaiting()) {
+        ContextController.instance.performCheck();
+      }
+    });
     return FlukkiController.instance
         .initialize(key: key, appName: appName, callbacks: callbacks);
   }
@@ -85,7 +100,7 @@ class _FlukkiProductTourState extends State<FlukkiProductTour> {
     productTourCreatorController
         ?.registerEditorRefresher(() => setState(() {}));
     contextToExplore = context;
-    UserWidgetsController.instance.buildContext = contextToExplore;
+    ContextController.instance.buildContext = contextToExplore;
 
     if (!FlukkiController.instance.isInBuilderMode) {
       return child;
@@ -95,6 +110,7 @@ class _FlukkiProductTourState extends State<FlukkiProductTour> {
       body: Form(
         key: formKey,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Expanded(
               child: MouseRegion(
@@ -105,8 +121,7 @@ class _FlukkiProductTourState extends State<FlukkiProductTour> {
                 child: Builder(
                   builder: (BuildContext ctx) {
                     contextToExplore = ctx;
-                    UserWidgetsController.instance.buildContext =
-                        contextToExplore;
+                    ContextController.instance.buildContext = contextToExplore;
                     return child;
                   },
                 ),
@@ -166,7 +181,7 @@ class _FlukkiProductTourState extends State<FlukkiProductTour> {
     }
     lastWidgetIndex = null;
     ElementWithWidgetTree? elementWithWidgetTree =
-        BuilderWidgetsController.instance.getMatchingElement(event.position);
+        ContextController.instance.getMatchingElement(event.position);
     if (elementWithWidgetTree != null) {
       lastElement = elementWithWidgetTree.element;
       var box = elementWithWidgetTree.element.renderObject as RenderBox;
@@ -203,8 +218,8 @@ class _FlukkiProductTourState extends State<FlukkiProductTour> {
                   lastEntry = null;
                 }
               },
-              hoveredWidgetChanged: (event) => BuilderWidgetsController.instance
-                  .getMatchingElement(event.position),
+              hoveredWidgetChanged: (event) =>
+                  ContextController.instance.getMatchingElement(event.position),
               controller: productTourCreatorController!,
               elementWithWidgetTree: elementWithWidgetTree,
             ));
@@ -617,54 +632,50 @@ class _ProductTourEditorState extends State<_ProductTourEditor> {
                   const SizedBox(
                     width: 16,
                   ),
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Expanded(
-                          child: Tooltip(
-                            message: widget.controller.productTour.steps.isEmpty
-                                ? 'Add some steps to be able to save product tour'
-                                : '',
-                            child: ElevatedButton.icon(
-                              onPressed: widget
-                                      .controller.productTour.steps.isEmpty
-                                  ? null
-                                  : () {
-                                      if (widget.controller.productTour.name ==
-                                              null ||
-                                          widget.controller.productTour.name!
-                                              .isEmpty) {
-                                        _shoeNameDialog(context);
-                                      } else {
-                                        widget.saveProductTour();
-                                      }
-                                    },
-                              label: const Text('Save'),
-                              icon: const Icon(Icons.save),
-                              style: FlukkiConstants.accentButtonStyle,
-                            ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Flexible(
+                        child: Tooltip(
+                          message: widget.controller.productTour.steps.isEmpty
+                              ? 'Add some steps to be able to save product tour'
+                              : '',
+                          child: ElevatedButton.icon(
+                            onPressed: widget
+                                    .controller.productTour.steps.isEmpty
+                                ? null
+                                : () {
+                                    if (widget.controller.productTour.name ==
+                                            null ||
+                                        widget.controller.productTour.name!
+                                            .isEmpty) {
+                                      _showNameDialog(context);
+                                    } else {
+                                      widget.saveProductTour();
+                                    }
+                                  },
+                            label: const Text('Save'),
+                            icon: const Icon(Icons.save),
+                            style: FlukkiConstants.accentButtonStyle,
                           ),
                         ),
-                        Expanded(
-                          child: ElevatedButton(
-                              onPressed: () => FlukkiController.instance
-                                  .turnOnTestMode(
-                                      widget.controller.productTour),
-                              style: FlukkiConstants.regularButtonStyle,
-                              child: const Text('Test this product tour')),
-                        ),
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: () =>
-                                widget.finishEditingWithoutSaving(),
+                      ),
+                      Flexible(
+                        child: ElevatedButton(
+                            onPressed: () => FlukkiController.instance
+                                .turnOnTestMode(widget.controller.productTour),
                             style: FlukkiConstants.regularButtonStyle,
-                            child: const Text('Cancel'),
-                          ),
+                            child: const Text('Test this product tour')),
+                      ),
+                      Flexible(
+                        child: ElevatedButton(
+                          onPressed: () => widget.finishEditingWithoutSaving(),
+                          style: FlukkiConstants.regularButtonStyle,
+                          child: const Text('Cancel'),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   )
                 ],
               ),
@@ -672,7 +683,7 @@ class _ProductTourEditorState extends State<_ProductTourEditor> {
     );
   }
 
-  void _shoeNameDialog(BuildContext context) {
+  void _showNameDialog(BuildContext context) {
     showDialog(
         barrierDismissible: false,
         context: context,
@@ -854,73 +865,4 @@ class _MyRecognizableWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => child;
-}
-
-class FlukkiWidgetsFlutterBinding extends WidgetsFlutterBinding {
-  /// initialization of Flukki binding, that is responsible for
-  /// monitoring widget tree
-  static WidgetsBinding ensureInitialized() {
-    FlukkiWidgetsFlutterBinding();
-    return WidgetsBinding.instance;
-  }
-
-  @override
-  BuildOwner? get buildOwner {
-    _buildOwner ??=
-        _FlukkiBuildOwner(focusManager: superBuildOwner?.focusManager);
-    return _buildOwner!;
-  }
-
-  BuildOwner? get superBuildOwner => super.buildOwner;
-
-  BuildOwner? _buildOwner;
-}
-
-class _FlukkiBuildOwner extends BuildOwner {
-  _FlukkiBuildOwner({super.focusManager});
-
-  final List<EnhancedElement> _dirty = [];
-
-  bool get _isBuilderMode => FlukkiController.instance.isInBuilderMode;
-
-  bool get _isTestMode => FlukkiController.instance.isInBuilderTestMode;
-
-  @override
-  void buildScope(Element context, [VoidCallback? callback]) {
-    super.buildScope(context, callback);
-    if (_isBuilderMode) {
-      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-        BuilderWidgetsController.instance.clearNotMountedElements();
-        if (_isTestMode) {
-          UserWidgetsController.instance.performCheck();
-        }
-        for (EnhancedElement element in _dirty) {
-          BuilderWidgetsController.instance.addElement(element);
-        }
-        _dirty.clear();
-      });
-    } else {
-      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-        UserWidgetsController.instance.performCheck();
-      });
-    }
-  }
-
-  @override
-  void scheduleBuildFor(Element element) {
-    final widgetName =
-        ProductTourMatcher.cropWidgetName(element.widget.toString());
-    if (_isBuilderMode) {
-      _dirty.add(EnhancedElement(element: element, widget: element.widget));
-    }
-
-    final ancestors = <String>[];
-    element.visitAncestorElements(
-        (e) => ProductTourMatcher.ancestorVisitor(e, ancestors));
-    ancestors.insert(0, widgetName);
-    UserWidgetsController.instance.addElement(PointerElement(
-        element: element, widgetTreeList: ancestors, widgetName: widgetName));
-
-    super.scheduleBuildFor(element);
-  }
 }
