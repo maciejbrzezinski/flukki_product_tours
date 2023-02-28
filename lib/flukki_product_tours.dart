@@ -14,6 +14,7 @@ import 'src/models/product_tour_step_model.dart';
 import 'src/widgets/announcement_builder.dart';
 import 'src/widgets/element_with_widget_tree.dart';
 import 'src/widgets/overlay_with_hole.dart';
+import 'src/widgets/recognizable_wrapper.dart';
 
 class Flukki {
   static final Flukki instance = Flukki._();
@@ -95,7 +96,7 @@ class _FlukkiProductTourState extends State<FlukkiProductTour> {
 
   @override
   Widget build(BuildContext context) {
-    final child = _MyRecognizableWrapper(child: widget.child);
+    final child = MyRecognizableWrapper(child: widget.child);
 
     productTourCreatorController
         ?.registerEditorRefresher(() => setState(() {}));
@@ -856,13 +857,4 @@ class _ProductTourSteps extends StatelessWidget {
         return 'Click on the element';
     }
   }
-}
-
-class _MyRecognizableWrapper extends StatelessWidget {
-  final Widget child;
-
-  const _MyRecognizableWrapper({required this.child});
-
-  @override
-  Widget build(BuildContext context) => child;
 }

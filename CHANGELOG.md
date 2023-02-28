@@ -1,3 +1,7 @@
+## 1.1.1
+
+* Improved widget identification
+
 ## 1.1.0
 
 * Changed way of initializing plugin

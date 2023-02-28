@@ -49,8 +49,7 @@ class ContextController {
 
   void removeElement(Element element) {
     elements.removeWhere((e) => e.element == element);
-    final widgetName =
-        ProductTourMatcher.cropWidgetName(element.widget.toString());
+    final widgetName = ProductTourMatcher.cropWidgetName(element);
     _elementsPerWidgetType[widgetName]
         ?.removeWhere((fatElement) => fatElement.element == element);
   }
@@ -95,8 +94,7 @@ class ContextController {
       } catch (_) {}
 
       return ElementWithWidgetTree(
-          widgetName:
-              ProductTourMatcher.cropWidgetName(bestMatch.widget.toString()),
+          widgetName: ProductTourMatcher.cropWidgetName(bestMatch.element),
           element: bestMatch.element,
           widgetTree: bestMatch.widgetTreeList,
           index: elementsWithTheSameWidgetTree.indexOf(bestMatch));
@@ -213,8 +211,7 @@ class FatElement {
 
   String get widgetTree => widgetTreeList.toString();
 
-  String get croppedWidgetName =>
-      ProductTourMatcher.cropWidgetName(widget.toString());
+  String get croppedWidgetName => ProductTourMatcher.cropWidgetName(element);
 
   Size? get size {
     if (_size == null) {

@@ -4,6 +4,7 @@ import '../controllers/flukki_controller.dart';
 import '../controllers/product_tours_controller.dart';
 import '../models/product_tour_model.dart';
 import '../models/product_tour_step_model.dart';
+import '../widgets/recognizable_wrapper.dart';
 
 class ProductTourMatcher {
   static ProductTour? getAnnouncementProductTour() {
@@ -26,7 +27,8 @@ class ProductTourMatcher {
     return null;
   }
 
-  static String cropWidgetName(String widgetName) {
+  static String cropWidgetName(Element element) {
+    var widgetName = element.widget.runtimeType.toString();
     final parametersIndex = widgetName.indexOf('(');
     if (parametersIndex != -1) {
       widgetName = widgetName.substring(0, parametersIndex);
@@ -38,12 +40,11 @@ class ProductTourMatcher {
     return widgetName;
   }
 
-  static bool ancestorVisitor(Element e, List<String> ancestors) {
-    final widgetName = cropWidgetName(e.widget.toString());
-    if (widgetName.contains('MyRecognizableWrapper')) {
+  static bool ancestorVisitor(Element element, List<String> ancestors) {
+    if (element.widget is MyRecognizableWrapper) {
       return false;
     }
-    ancestors.add(cropWidgetName(e.widget.toString()));
+    ancestors.add(cropWidgetName(element));
     return true;
   }
 

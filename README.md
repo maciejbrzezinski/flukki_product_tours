@@ -18,6 +18,7 @@ One day I was thinking, what cool Flutter project I can create. And here we are 
 This is the very beginning of our story, and please be aware, that you will possibly experience:
 - Plugin is fragile for widget tree changes. For example you will wrap your pointed widget with Center, or some other widget and plugin will stop to recognize the original widget.
 - On web you should use CanvasKit renderer instead of the HTML one, because overlays were not working properly there
+- Product tours created in debug mode won't work in release mode and the other way around
 
 ### Advantages
 After creating an account at https://www.flukki.com/ you will be able to get your **key** (it will be needed during configuration).
@@ -31,7 +32,7 @@ Flukki will help you in:
 1. Add Flukki to you project
 ```yaml 
 dependencies:
-  flukki_product_tours: ^1.1.0
+  flukki_product_tours: ^1.1.1
 ```
 2. Add environment variable to your Flutter run method
 ```bash
