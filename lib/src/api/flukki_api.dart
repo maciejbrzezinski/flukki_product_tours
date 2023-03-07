@@ -83,10 +83,9 @@ class FlukkiApi {
     String apiKey = FlukkiController.instance.apiKey!;
     String appName = FlukkiController.instance.appId!;
     try {
-      final response = await dio.post(
+      await dio.post(
           '${apiAddressPrefix}removeProductTour?key=$apiKey',
           data: {'appName': appName, 'productTourID': productTour.id});
-      return response.data['id'];
     } on DioError catch (e) {
       if (e.response?.statusCode == 401) {
         throw FlukkiWrongKeyException('Provided api key ($apiKey) is wrong');
