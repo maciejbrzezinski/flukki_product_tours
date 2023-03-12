@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'package:string_similarity/string_similarity.dart';
 
 import 'package:collection/collection.dart';
 import 'package:flukki_product_tours/src/helpers/product_tour_matcher.dart';
@@ -121,8 +122,34 @@ class ContextController {
     FatElement? matchingElement;
     final productTour = currentProductTours.firstWhereOrNull((productTour) {
       final currentStep = productTour.currentStep as PointerProductTourStep;
-      final elements = _elementsPerWidgetType[currentStep.widgetName]
-          ?.where((element) => element.widgetTree == currentStep.widgetKey);
+
+      print('TESTING AND HUNTING BUGS, DO NOT INTERRUPT');
+      ////TESTING
+
+      Iterable<FatElement> elements =
+          _elementsPerWidgetType[currentStep.widgetName]?.where((element) {
+                return element.widgetTree == currentStep.widgetKey;
+              }) ??
+              [];
+      
+      if (elements.isEmpty) {
+        debugPrint(
+            'The elements are empty, trying to find the widget similar to original one.');
+        elements =
+            _elementsPerWidgetType[currentStep.widgetName]?.where((element) {
+                  final similarity =
+                      element.widgetTree.similarityTo(currentStep.widgetKey);
+                  debugPrint(
+                      'Similar widget = {$similarity>0.75}, Similarity: $similarity. Original: ${currentStep.widgetName}, Found: ${element.widgetTreeList.first}');
+                  return similarity > 0.75;
+                }) ??
+                [];
+      } else {
+        debugPrint('Found the widget.');
+      }
+
+      
+      ////TESTING
 
       if (elements != null &&
           currentStep.widgetIndex >= 0 &&
