@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import '../helpers/app_version_controller.dart';
 import '../helpers/device_id_controller.dart';
 import '../models/product_tour_model.dart';
 import 'context_controller.dart';
@@ -38,6 +39,7 @@ class FlukkiController {
     appId = appName;
     this.callbacks = callbacks ?? {};
     await DeviceIdController.instance.init(key);
+    await AppVersionController.instance.init();
     await ProductToursController.instance
         .initialize(this.callbacks, DeviceIdController.instance.deviceId);
     ContextController.instance.performCheck();
