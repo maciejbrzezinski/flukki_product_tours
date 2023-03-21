@@ -36,11 +36,12 @@ class PointerProductTourStep extends ProductTourStep {
   late String? _action;
   int widgetIndex;
   String widgetName;
+  List<String> versions = [];
 
   PointerAction get pointerAction =>
       PointerAction.values.firstWhere((element) => element.name == _action);
 
-  PointerProductTourStep(int index, this.caption, this.widgetKey,
+  PointerProductTourStep(int index, this.versions, this.caption, this.widgetKey,
       PointerAction action, this.widgetIndex,
       {required this.widgetName})
       : super(index) {
@@ -49,6 +50,7 @@ class PointerProductTourStep extends ProductTourStep {
 
   PointerProductTourStep.fromJson(Map<String, dynamic> json)
       : caption = json['caption'],
+        versions = json['versions'] ?? [],
         widgetKey = json['widgetKey'],
         _action = json['action'],
         widgetIndex = json['widgetIndex'] ?? 0,
@@ -58,6 +60,7 @@ class PointerProductTourStep extends ProductTourStep {
   @override
   ProductTourStep clone() => PointerProductTourStep(
       index,
+      versions,
       caption,
       widgetKey,
       PointerAction.values.firstWhere((element) => element.name == _action),
@@ -67,6 +70,7 @@ class PointerProductTourStep extends ProductTourStep {
   @override
   Map<String, dynamic> toJson() => {
         'index': index,
+        'versions': versions,
         'caption': caption,
         'widgetKey': widgetKey,
         'action': _action,
@@ -82,9 +86,11 @@ class AnnouncementProductTourStep extends ProductTourStep {
   List<AnnouncementWidget> widgets;
   Color? backgroundColor;
   bool isNew = true;
+  List<String> versions = [];
 
   AnnouncementProductTourStep(
-    int index, {
+    int index, 
+    this.versions, {
     this.displayStyle = DisplayStyle.popup,
     List<AnnouncementWidget>? widgetsList,
     this.backgroundColor = Colors.white,
@@ -98,6 +104,7 @@ class AnnouncementProductTourStep extends ProductTourStep {
             ? []
             : AnnouncementWidget.fromList(json['widgets'],
                 callbacks: callbacks),
+        versions = json['versions'] ?? [],
         displayStyle = DisplayStyle.values.firstWhere((element) =>
             element.name == (json['displayStyle'] ?? 'bottomSheet')),
         backgroundColor = Color(json['backgroundColor'] ?? 0xFFffffff),
@@ -107,6 +114,7 @@ class AnnouncementProductTourStep extends ProductTourStep {
 
   @override
   ProductTourStep clone() => AnnouncementProductTourStep(index,
+      versions,
       displayStyle: displayStyle,
       widgetsList: List.from(widgets),
       isNew: false);
@@ -114,6 +122,7 @@ class AnnouncementProductTourStep extends ProductTourStep {
   @override
   Map<String, dynamic> toJson() => {
         'index': index,
+        'versions': [],
         'displayStyle': displayStyle.name,
         'widgets': widgets.map((e) => e.toJson()).toList(),
         'backgroundColor': backgroundColor?.value,

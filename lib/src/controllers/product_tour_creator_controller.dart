@@ -1,3 +1,4 @@
+import 'package:flukki_product_tours/src/helpers/app_version_controller.dart';
 import 'package:flutter/material.dart';
 
 import '../api/flukki_api.dart';
@@ -28,6 +29,7 @@ class ProductTourCreatorController {
       ElementWithWidgetTree elementWithWidgetTree, PointerAction action) {
     return _productTour.addStep(PointerProductTourStep(
             _productTour.stepsCount,
+            [_productTour.stepsCount.toString()],
             caption,
             elementWithWidgetTree.widgetTree.toString(),
             action,
@@ -38,7 +40,9 @@ class ProductTourCreatorController {
 
   AnnouncementProductTourStep addAnnouncement() {
     return _productTour.addStep(
-        AnnouncementProductTourStep(_productTour.stepsCount, widgetsList: [
+        AnnouncementProductTourStep(_productTour.stepsCount,
+            [_productTour.stepsCount.toString()],
+          widgetsList: [
       const TextWidget(value: 'Title', index: 0, textStyling: TextStyling.h2),
       const TextWidget(value: 'Describe your value', index: 1),
     ])) as AnnouncementProductTourStep;
@@ -47,15 +51,19 @@ class ProductTourCreatorController {
   Future<void> save() async {
     final apiKey = FlukkiController.instance.apiKey!;
     final appName = FlukkiController.instance.appId!;
+    final appVersion = AppVersionController.instance.currentVersion;
 
     await _saveImages(
         appName: appName, apiKey: apiKey, productTour: productTour);
+
+    productTour.minAppVersion ??= appVersion;
 
     final id = await FlukkiApi.saveProductTour(
         appName: appName, apiKey: apiKey, productTour: productTour);
     if (productTour.id == null) {
       if (id != null) {
         productTour.id = id;
+        productTour.minAppVersion = appVersion;
         await FlukkiApi.saveProductTour(
             appName: appName, apiKey: apiKey, productTour: productTour);
       }

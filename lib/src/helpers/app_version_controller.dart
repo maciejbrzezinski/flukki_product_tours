@@ -14,7 +14,7 @@ class AppVersionController {
   }
 
   /// Returns the current app version in format x.y.z+buildNumber.
-  static String get currentVersion {
+  String get currentVersion {
     return '${_currentVersion![0]}.${_currentVersion![1]}.${_currentVersion![2]}+${_currentVersion![3]}';
   }
 
@@ -22,7 +22,7 @@ class AppVersionController {
   ///
   /// Format of [version] should be x.y.z+buildNumber.
   /// Example: 1.0.0+1
-  static bool isCurrentVersionGreaterEqual(String version) {
+  bool isCurrentVersionGreaterEqual(String version) {
     final List<String> savedParts = version.split('+');
     List<String> savedVersion = savedParts[0].split('.');
     savedVersion.add(savedParts[1]);

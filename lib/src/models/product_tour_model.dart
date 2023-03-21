@@ -1,3 +1,5 @@
+import 'package:flukki_product_tours/src/helpers/app_version_controller.dart';
+
 import 'product_tour_step_model.dart';
 
 class ProductTour {
@@ -7,10 +9,18 @@ class ProductTour {
   int? skippedIndex;
   String? name;
   String? appName;
+  String? minAppVersion;
 
   bool get isFinished => currentIndex >= stepsCount || skippedIndex != null;
 
-  int get stepsCount => _steps.length;
+  //int get stepsCount => _steps.length;
+  int get stepsCount {
+    final ids = <int>{};
+    for (var element in _steps) {
+      ids.add(element.index);
+    }
+    return ids.length;
+  }
 
   ProductTour();
 
@@ -23,6 +33,7 @@ class ProductTour {
             List<Map<String, dynamic>>.from(json['steps']),
             callbacks: callbacks),
         id = json['id'],
+        minAppVersion = json['minAppVersion'],
         name = json['name'] ?? 'Random name';
 
   List<ProductTourStep> get steps => _steps;
@@ -46,6 +57,7 @@ class ProductTour {
     newProductTour.name = name;
     newProductTour.id = id;
     newProductTour.skippedIndex = skippedIndex;
+    newProductTour.minAppVersion = minAppVersion;
     return newProductTour;
   }
 
@@ -54,7 +66,8 @@ class ProductTour {
         if (withCurrentIndex) 'skippedIndex': skippedIndex,
         'steps': _steps.map((e) => e.toJson()).toList(),
         'id': id,
-        'name': name
+        'name': name,
+        'minAppVersion': minAppVersion
       };
 
   bool hasMatchingProductTourSteps(List<String> widgetTree) {
