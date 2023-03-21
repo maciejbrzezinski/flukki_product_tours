@@ -58,28 +58,12 @@ class ProductToursController {
     isLoading = false;
   }
 
-  ProductTour? findMatchingProductTourStep(List<String> widgetTree) {
-    final matchingProductTours = _productTours.where((productTour) =>
-        productTour.hasMatchingProductTourSteps(widgetTree) &&
-        !productTour.isFinished);
-    if (matchingProductTours.isEmpty) {
-      return null;
-    }
-    return matchingProductTours.first;
-  }
-
   List<ProductTour> findActivePointerProductTours() {
     return _productTours
         .where((productTour) =>
             productTour.currentStep is PointerProductTourStep &&
             !productTour.isFinished)
         .toList();
-  }
-
-  bool shouldCheckThisWidget(String widgetName) {
-    final matchingProductTours = _productTours.where((productTour) =>
-        productTour.hasStepForTheWidget(widgetName) && !productTour.isFinished);
-    return matchingProductTours.isNotEmpty;
   }
 
   ProductTour? isAnnouncementProductTourActive() =>
