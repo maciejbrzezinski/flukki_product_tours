@@ -57,25 +57,6 @@ class ProductTour {
         'name': name
       };
 
-  bool hasMatchingProductTourSteps(List<String> widgetTree) {
-    return _steps
-        .where((step) =>
-            step.index == currentIndex &&
-            (step is AnnouncementProductTourStep ||
-                (step is PointerProductTourStep &&
-                    step.widgetKey == widgetTree.toString())))
-        .isNotEmpty;
-  }
-
-  bool hasStepForTheWidget(String widget) {
-    return _steps
-        .where((step) =>
-            step.index == currentIndex &&
-            (step is PointerProductTourStep &&
-                step.widgetKey.startsWith('[$widget')))
-        .isNotEmpty;
-  }
-
   static List<ProductTour>? fromJsonList(List<Map<String, dynamic>> jsons,
           Map<String, void Function()> callbacks) =>
       jsons.map((json) => ProductTour.fromJson(json, callbacks)).toList();
