@@ -61,7 +61,9 @@ class FlukkiApi {
       return ProductTour.fromJsonList(
           List<Map<String, dynamic>>.from(
               response.data['result'].where((e) => e != null).toList().map((e) {
-            return jsonDecode(e['productTour']);
+            final decoded = jsonDecode(e['productTour']);
+            decoded['id'] = e['id'];
+            return decoded;
           }).toList()),
           callbacks);
     } on DioError catch (e) {
@@ -83,8 +85,7 @@ class FlukkiApi {
     String apiKey = FlukkiController.instance.apiKey!;
     String appName = FlukkiController.instance.appId!;
     try {
-      await dio.post(
-          '${apiAddressPrefix}removeProductTour?key=$apiKey',
+      await dio.post('${apiAddressPrefix}removeProductTour?key=$apiKey',
           data: {'appName': appName, 'productTourID': productTour.id});
     } on DioError catch (e) {
       if (e.response?.statusCode == 401) {
@@ -143,10 +144,10 @@ class FlukkiApi {
   }
 
   static updateDeviceId(
-      {required String deviceId, required String apiKey}) async {
+      {required String userID, required String apiKey}) async {
     try {
       await dio.post('${apiAddressPrefix}updateDeviceId?key=$apiKey',
-          data: {'deviceId': deviceId});
+          data: {'deviceId': userID});
     } on DioError catch (e) {
       if (e.response?.statusCode == 402) {
         throw FlukkiOutOfCreditsException(
@@ -163,12 +164,12 @@ class FlukkiApi {
 
   static sendStatistics(
       {required String appName,
-      required String deviceId,
+      required String userID,
       required String apiKey,
       required List<ProductTourProgress> statistics}) async {
     try {
       await dio.post('${apiAddressPrefix}sendStats?key=$apiKey', data: {
-        'deviceId': deviceId,
+        'deviceId': userID,
         'appName': statistics.firstWhereOrNull((e) => true)?.appName ?? appName,
         'stats': statistics.map((stats) => stats.toJson()).toList()
       });
@@ -182,6 +183,57 @@ class FlukkiApi {
     } catch (e) {
       debugPrint(e.toString());
     }
+  }
+
+  static Future<List<ProductTourProgress>?> fetchStatistics(
+      {required String apiKey,
+      required String appName,
+      required String userID,
+      required List<String> productTourIDs}) async {
+    try {
+      final response = await dio
+          .post('${apiAddressPrefix}fetchStats?key=$apiKey', data: {
+        'deviceId': userID,
+        'appName': appName,
+        'productTourIDs': productTourIDs
+      });
+      final statsJson = response.data['stats'];
+      if (statsJson[0] == null) {
+        return null;
+      }
+      return List<ProductTourProgress>.from(
+          statsJson.map((e) => ProductTourProgress.fromJson(e)));
+    } on DioError catch (e) {
+      if (e.response?.statusCode == 401) {
+        throw FlukkiOutOfCreditsException(
+            'You have exceeded your monthly active devices limit');
+      } else {
+        debugPrint(e.toString());
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    return null;
+  }
+
+  static updateUser({required String apiKey, required String userId}) async {
+    try {
+      await dio.post('${apiAddressPrefix}updateUser?key=$apiKey', data: {
+        'deviceId': userId,
+      });
+    } on DioError catch (e) {
+      if (e.response?.statusCode == 402) {
+        throw FlukkiOutOfCreditsException(
+            'You have exceeded your monthly active devices limit');
+      } else if (e.response?.statusCode == 401) {
+        throw FlukkiWrongKeyException('Provided api key ($apiKey) is wrong');
+      } else {
+        debugPrint(e.toString());
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    return null;
   }
 }
 

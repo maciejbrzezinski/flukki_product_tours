@@ -1,10 +1,12 @@
 import 'dart:collection';
 
 import 'package:collection/collection.dart';
+import 'package:flukki_product_tours/src/controllers/statistics_controller.dart';
 import 'package:flukki_product_tours/src/helpers/product_tour_matcher.dart';
 import 'package:flutter/material.dart';
 
 import '../helpers/product_tour_helper_methods.dart';
+import '../helpers/user_controller.dart';
 import '../models/product_tour_model.dart';
 import '../models/product_tour_step_model.dart';
 import '../widgets/element_with_widget_tree.dart';
@@ -103,6 +105,13 @@ class ContextController {
     }
   }
 
+  void performCheckIfPossible(timeStamp) {
+    if (UserController.instance.isSignedIn &&
+        ContextController.instance.flushAwaiting()) {
+      ContextController.instance.performCheck();
+    }
+  }
+
   void performCheck() {
     if (ProductToursController.instance.isStepDisplayed) return;
     if (!FlukkiController.instance.isInBuilderTestMode &&
@@ -157,8 +166,8 @@ class ContextController {
   static Future<void> _showAnnouncementToUser(
       ProductTour productTour, BuildContext context) async {
     ProductToursController.instance.isStepDisplayed = true;
-    final currentStep = productTour.steps[productTour.currentIndex]
-        as AnnouncementProductTourStep;
+    final currentStep = productTour.steps[StatisticsController.instance
+        .getCurrentStepIndex(productTour)] as AnnouncementProductTourStep;
     switch (currentStep.displayStyle) {
       case DisplayStyle.bottomSheet:
         await ProductTourHelperMethods.runAsBottomSheet(context, productTour);

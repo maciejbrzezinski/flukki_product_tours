@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flukki_product_tours/src/controllers/context_controller.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -30,28 +29,46 @@ class Flukki {
       {required String key,
       required String appName,
       Map<String, void Function()>? callbacks}) async {
-    assert(const bool.fromEnvironment('flutter.memory_allocations') == true,
-        'Environment variable not set. Add <flutter.memory_allocations=true> environment variable. Your run method should look like this "--dart-define=flutter.memory_allocations=true"');
-    MemoryAllocations.instance.addListener((event) {
-      if (event.object is Element) {
-        if (event is ObjectCreated) {
-          ContextController.instance.addElement(event.object as Element);
-        } else if (event is ObjectDisposed) {
-          ContextController.instance.removeElement(event.object as Element);
-        }
-      }
-    });
-    WidgetsBinding.instance.addPersistentFrameCallback((timeStamp) {
-      if (ContextController.instance.flushAwaiting()) {
-        ContextController.instance.performCheck();
-      }
-    });
     return FlukkiController.instance
         .initialize(key: key, appName: appName, callbacks: callbacks);
   }
 
   /// A method to turn on product tours builder
   void turnOnBuilder() => FlukkiController.instance.turnOnBuilder();
+
+  /// Use this method to identify a specific user.
+  ///
+  /// Thanks to the method you will be able to save progress for each user,
+  /// even when they will be using your app on different devices.
+  ///
+  /// It should be integrated with your app's authorization flow.
+  /// When user signs in to your app, call this method.
+  ///
+  /// Before calling this method,
+  /// or [signInAnonymous] product tours won't display.
+  ///
+  /// [userID] is your user unique ID
+  Future<void> signInUser(String userID) async =>
+      await FlukkiController.instance.signIn(userID: userID);
+
+  /// Use this method to login as anonymous user.
+  ///
+  /// Anonymous user is always* the same for a specific device.
+  /// * anonymous user ID is stored locally, so clearing cache will
+  /// restart product tour progress.
+  ///
+  /// It may be useful in two cases:
+  /// - you do not have any sign in flow
+  /// - you want to create a product tour for moment when
+  /// user is not signed in yet
+  ///
+  /// Before calling this method,
+  /// or [signInUser] product tours won't display.
+  Future<void> signInAnonymous() async =>
+      await FlukkiController.instance.signIn();
+
+  /// Use this method to sign out and stop displaying product tours
+  Future<void> signOut() async => await FlukkiController.instance.signOut();
 }
 
 /// Widget, that gives possibility to create and display product tours
