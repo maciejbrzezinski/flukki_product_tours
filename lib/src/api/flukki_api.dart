@@ -69,7 +69,7 @@ class FlukkiApi {
     } on DioError catch (e) {
       if (e.response?.statusCode == 402) {
         throw FlukkiOutOfCreditsException(
-            'You have exceeded your monthly active devices limit');
+            'You have exceeded your monthly active users limit');
       } else if (e.response?.statusCode == 401) {
         throw FlukkiWrongKeyException('Provided api key ($apiKey) is wrong');
       } else {
@@ -131,7 +131,7 @@ class FlukkiApi {
     } on DioError catch (e) {
       if (e.response?.statusCode == 402) {
         throw FlukkiOutOfCreditsException(
-            'You have exceeded your monthly active devices limit');
+            'You have exceeded your monthly active users limit');
       } else if (e.response?.statusCode == 401) {
         throw FlukkiWrongKeyException('Provided api key ($apiKey) is wrong');
       } else {
@@ -151,7 +151,7 @@ class FlukkiApi {
     } on DioError catch (e) {
       if (e.response?.statusCode == 402) {
         throw FlukkiOutOfCreditsException(
-            'You have exceeded your monthly active devices limit');
+            'You have exceeded your monthly active users limit');
       } else if (e.response?.statusCode == 401) {
         throw FlukkiWrongKeyException('Provided api key ($apiKey) is wrong');
       } else {
@@ -176,7 +176,7 @@ class FlukkiApi {
     } on DioError catch (e) {
       if (e.response?.statusCode == 401) {
         throw FlukkiOutOfCreditsException(
-            'You have exceeded your monthly active devices limit');
+            'You have exceeded your monthly active users limit');
       } else {
         debugPrint(e.toString());
       }
@@ -206,7 +206,7 @@ class FlukkiApi {
     } on DioError catch (e) {
       if (e.response?.statusCode == 401) {
         throw FlukkiOutOfCreditsException(
-            'You have exceeded your monthly active devices limit');
+            'You have exceeded your monthly active users limit');
       } else {
         debugPrint(e.toString());
       }
@@ -224,7 +224,7 @@ class FlukkiApi {
     } on DioError catch (e) {
       if (e.response?.statusCode == 402) {
         throw FlukkiOutOfCreditsException(
-            'You have exceeded your monthly active devices limit');
+            'You have exceeded your monthly active users limit');
       } else if (e.response?.statusCode == 401) {
         throw FlukkiWrongKeyException('Provided api key ($apiKey) is wrong');
       } else {
