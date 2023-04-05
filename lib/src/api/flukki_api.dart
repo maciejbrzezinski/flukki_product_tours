@@ -215,26 +215,6 @@ class FlukkiApi {
     }
     return null;
   }
-
-  static updateUser({required String apiKey, required String userId}) async {
-    try {
-      await dio.post('${apiAddressPrefix}updateUser?key=$apiKey', data: {
-        'deviceId': userId,
-      });
-    } on DioError catch (e) {
-      if (e.response?.statusCode == 402) {
-        throw FlukkiOutOfCreditsException(
-            'You have exceeded your monthly active users limit');
-      } else if (e.response?.statusCode == 401) {
-        throw FlukkiWrongKeyException('Provided api key ($apiKey) is wrong');
-      } else {
-        debugPrint(e.toString());
-      }
-    } catch (e) {
-      debugPrint(e.toString());
-    }
-    return null;
-  }
 }
 
 class FlukkiOutOfCreditsException implements Exception {
