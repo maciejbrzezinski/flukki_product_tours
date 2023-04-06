@@ -57,7 +57,7 @@ return MaterialApp(
  home: FlukkiProductTour( child: Scaffold(  
 ```  
 6. Turn on the builder.
-   Please be aware where you use this method! It is intended to be used by a user with super admin role. You can attach it to a button somewhere in a superadmin panel, or create a fancy gesture that will enable the builder, but regular user should not be able to run it. Everyone that is able to run this method can modify product tours.
+   Please be aware where you use this method! It is intended to be used by a user with super admin role. You can attach it to a button somewhere in a superadmin panel, or create a fancy gesture that will enable the builder, but regular user should not be able to run it. Everyone who is able to run this method can modify product tours.
 ```dart  
 Flukki.instance.turnOnBuilder()  
 ```  
