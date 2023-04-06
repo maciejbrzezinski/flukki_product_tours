@@ -1,3 +1,4 @@
+import 'package:flukki_product_tours/src/controllers/statistics_controller.dart';
 import 'package:flutter/material.dart';
 
 import '../models/product_tour_model.dart';
@@ -32,13 +33,15 @@ class ProductTourPreview extends StatefulWidget {
 class _ProductTourPreviewState extends State<ProductTourPreview> {
   late int index;
   late int initialIndex;
+  late ProductTourProgress progress;
   int stepsToShow = 1;
 
   @override
   void initState() {
     super.initState();
-    index = widget.productTour.currentIndex;
-    initialIndex = widget.productTour.currentIndex;
+    progress = StatisticsController.instance.getProgress(widget.productTour);
+    index = progress.currentStep;
+    initialIndex = progress.currentStep;
     final currentStep =
         widget.productTour.steps[index] as AnnouncementProductTourStep;
     for (int i = index + 1; i < widget.productTour.stepsCount; i++) {
