@@ -1,6 +1,5 @@
-## 2.0.0
-BREAKING: Changed way of plugin initialization
-Before and after authorization product tours won't be displayed
+## 2.0.0+1
+BREAKING: Changed way of plugin initialization. User must be signed in to see product tours.
 * `signInAnonymous` and `signInUser` allows to create new sessions for users
 * `signOut` allows to sign out user
 
