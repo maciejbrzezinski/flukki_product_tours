@@ -1,3 +1,7 @@
+## 2.0.1
+
+* Fixed going back to list of product tours without saving changes
+
 ## 2.0.0+1
 BREAKING: Changed way of plugin initialization. User must be signed in to see product tours.
 * `signInAnonymous` and `signInUser` allows to create new sessions for users

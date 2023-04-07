@@ -238,7 +238,7 @@ class _FlukkiProductTourState extends State<FlukkiProductTour> {
               },
               hoveredWidgetChanged: (event) =>
                   ContextController.instance.getMatchingElement(event.position),
-              controller: productTourCreatorController!,
+              controller: productTourCreatorController,
               elementWithWidgetTree: elementWithWidgetTree,
             ));
     Overlay.of(context).insert(lastEntry!);
