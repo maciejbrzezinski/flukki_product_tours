@@ -1,3 +1,7 @@
+## 2.0.2
+
+* Fixed announcements preview in test mode
+
 ## 2.0.1
 
 * Fixed going back to list of product tours without saving changes

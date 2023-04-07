@@ -99,6 +99,13 @@ class StatisticsController {
   }
 
   ProductTourProgress getProgress(ProductTour productTour) {
+    if (FlukkiController.instance.isInBuilderTestMode) {
+      return ProductTourProgress(
+          productTourId: 'test',
+          appName: null,
+          currentStep: TestStatsController.currentIndex,
+          skippedIndex: TestStatsController.skippedIndex);
+    }
     final productTourProgress = _statistics
         .firstWhereOrNull((element) => element.productTourId == productTour.id);
     if (productTourProgress == null) {
@@ -153,8 +160,11 @@ class ProductTourProgress {
   String productTourId;
   String? appName;
 
-  ProductTourProgress({required this.productTourId, required this.appName})
-      : currentStep = 0;
+  ProductTourProgress(
+      {required this.productTourId,
+      required this.appName,
+      this.currentStep = 0,
+      this.skippedIndex = 0});
 
   Map<String, dynamic> toJson() => {
         'currentStep': currentStep,
