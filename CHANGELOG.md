@@ -1,3 +1,7 @@
+## 2.0.2+1
+
+* Updated README.md
+
 ## 2.0.2
 
 * Fixed announcements preview in test mode
