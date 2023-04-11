@@ -33,7 +33,7 @@ You configure our plugin and start creating product tours with the builder. The 
 ### Configuration
 1. Add Flukki to you project
 ```yaml dependencies:  
- flukki_product_tours: ^2.0.0
+ flukki_product_tours: ^2.0.3
  ```  
 2. Add environment variable to your Flutter run method
    This is crucial part of configuration, because enabling memory allocations allow us analyze widget tree changes in your app. You can check how to configure your IDE and read more about memory allocations here: [Flutter | Understanding the MemoryAllocations](https://medium.com/@maciejbrzezinski/flutter-what-is-memoryallocations-1ee2eb0a8670)
