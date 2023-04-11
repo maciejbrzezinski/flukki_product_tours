@@ -1,5 +1,5 @@
+![Flukki logo](https://user-images.githubusercontent.com/34410554/231200831-cfd1e634-988d-4569-b03b-56b7412aea34.png)
 
-![Flutter logo](https://user-images.githubusercontent.com/34410554/218568476-2f68aaef-992d-4c3e-965e-4ac34c282a53.png)  
 **First no-code product tour builder for Flutter**  
 https://www.flukki.com/
 
