@@ -8,7 +8,6 @@ import '../api/flukki_api.dart';
 import '../../constants.dart';
 import '../models/product_tour_model.dart';
 import '../models/product_tour_step_model.dart';
-import 'local_storage_controller.dart';
 import 'statistics_controller.dart';
 
 class ProductToursController {
@@ -37,15 +36,6 @@ class ProductToursController {
         .toList();
 
     if (remoteProductTours != null) {
-      remoteProductTours = remoteProductTours.map((remoteProductTour) {
-        ProductTour? matchingLocalCopy = localProductTours.firstWhereOrNull(
-            (localProductTour) => localProductTour.id == remoteProductTour.id);
-        if (matchingLocalCopy != null) {
-          remoteProductTour.currentIndex = matchingLocalCopy.currentIndex;
-          remoteProductTour.skippedIndex = matchingLocalCopy.skippedIndex;
-        }
-        return remoteProductTour;
-      }).toList();
       await sharedPreferences.setStringList(
           FlukkiConstants.productToursPreferencesKey,
           remoteProductTours.map((e) => jsonEncode(e.toJson())).toList());
@@ -58,28 +48,12 @@ class ProductToursController {
     isLoading = false;
   }
 
-  ProductTour? findMatchingProductTourStep(List<String> widgetTree) {
-    final matchingProductTours = _productTours.where((productTour) =>
-        productTour.hasMatchingProductTourSteps(widgetTree) &&
-        !productTour.isFinished);
-    if (matchingProductTours.isEmpty) {
-      return null;
-    }
-    return matchingProductTours.first;
-  }
-
   List<ProductTour> findActivePointerProductTours() {
     return _productTours
         .where((productTour) =>
             productTour.currentStep is PointerProductTourStep &&
             !productTour.isFinished)
         .toList();
-  }
-
-  bool shouldCheckThisWidget(String widgetName) {
-    final matchingProductTours = _productTours.where((productTour) =>
-        productTour.hasStepForTheWidget(widgetName) && !productTour.isFinished);
-    return matchingProductTours.isNotEmpty;
   }
 
   ProductTour? isAnnouncementProductTourActive() =>
@@ -103,11 +77,12 @@ class ProductToursController {
           break;
         }
       }
-      productTour.currentIndex += progress;
+      StatisticsController.instance
+          .updateProgressCurrent(productTour: productTour, progress: progress);
     } else {
-      productTour.currentIndex++;
+      StatisticsController.instance
+          .updateProgressCurrent(productTour: productTour, progress: 1);
     }
-    await LocalStorageController.saveProductTour(productTour);
     if (!isTestMode) {
       StatisticsController.instance.sendStatistics(productTour: productTour);
     }
@@ -130,8 +105,8 @@ class ProductToursController {
   }
 
   Future<void> skipAll(ProductTour productTour) async {
-    productTour.skippedIndex = productTour.currentIndex;
-    await LocalStorageController.saveProductTour(productTour);
+    StatisticsController.instance.updateProgressSkip(
+        productTour: productTour, skipIndex: productTour.currentIndex);
     await StatisticsController.instance
         .sendStatistics(productTour: productTour);
   }

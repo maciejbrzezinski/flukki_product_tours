@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  Flukki.instance.initialize(appName: 'Awesome app', key: 'xyz');
+  await Flukki.instance.initialize(appName: 'Awesome app', key: 'xyz');
+  await Flukki.instance.signInAnonymous();
 
   runApp(const MyApp());
 }

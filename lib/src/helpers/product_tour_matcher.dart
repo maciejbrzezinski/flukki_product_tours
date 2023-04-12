@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../controllers/flukki_controller.dart';
 import '../controllers/product_tours_controller.dart';
+import '../controllers/test_product_tour_controller.dart';
 import '../models/product_tour_model.dart';
 import '../models/product_tour_step_model.dart';
 import '../widgets/recognizable_wrapper.dart';
@@ -14,8 +15,8 @@ class ProductTourMatcher {
       final matchingProductTour = testController!.productTour;
       if (matchingProductTour.currentIndex >= matchingProductTour.stepsCount ||
           matchingProductTour.skippedIndex != null) {
-        matchingProductTour.currentIndex = 0;
-        matchingProductTour.skippedIndex = null;
+        TestStatsController.currentIndex = 0;
+        TestStatsController.skippedIndex = null;
       }
       final currentStep = matchingProductTour.currentStep;
       if (currentStep is AnnouncementProductTourStep) {
@@ -57,8 +58,8 @@ class ProductTourMatcher {
       matchingProductTours.add(testProductTour);
       if (testProductTour.currentIndex >= testProductTour.stepsCount ||
           testProductTour.skippedIndex != null) {
-        testProductTour.currentIndex = 0;
-        testProductTour.skippedIndex = null;
+        TestStatsController.currentIndex = 0;
+        TestStatsController.skippedIndex = null;
       }
       if (testProductTour.currentStep is PointerProductTourStep) {
         return matchingProductTours;

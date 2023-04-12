@@ -1,19 +1,17 @@
-import 'package:flukki_product_tours/src/helpers/app_version_controller.dart';
-
+import '../controllers/statistics_controller.dart';
 import 'product_tour_step_model.dart';
 
 class ProductTour {
   String? id;
   List<ProductTourStep> _steps = [];
-  int currentIndex = 0;
-  int? skippedIndex;
   String? name;
   String? appName;
   String? minAppVersion;
 
-  bool get isFinished => currentIndex >= stepsCount || skippedIndex != null;
+  bool get isFinished =>
+      StatisticsController.instance.isProductTourFinished(this);
 
-  //int get stepsCount => _steps.length;
+  //int get stepsCount => _steps.length; TODO: WHY?
   int get stepsCount {
     final ids = <int>{};
     for (var element in _steps) {
@@ -22,14 +20,20 @@ class ProductTour {
     return ids.length;
   }
 
+  int get currentIndex =>
+      StatisticsController.instance.getCurrentStepIndex(this);
+
+  int? get skippedIndex => StatisticsController.instance.getSkippedIndex(this);
+
+ 
+
+
   ProductTour();
 
   ProductTour.fromJson(
       Map<String, dynamic> json, Map<String, void Function()> callbacks,
       {this.appName})
-      : currentIndex = json['currentIndex'] ?? 0,
-        skippedIndex = json['skippedIndex'],
-        _steps = ProductTourStep.fromJsonList(
+      : _steps = ProductTourStep.fromJsonList(
             List<Map<String, dynamic>>.from(json['steps']),
             callbacks: callbacks),
         id = json['id'],
@@ -39,6 +43,8 @@ class ProductTour {
   List<ProductTourStep> get steps => _steps;
 
   ProductTourStep? get currentStep {
+    final currentIndex =
+        StatisticsController.instance.getCurrentStepIndex(this);
     if (currentIndex > stepsCount - 1) {
       return null;
     }
@@ -52,42 +58,14 @@ class ProductTour {
 
   ProductTour clone() {
     final newProductTour = ProductTour();
-    newProductTour.currentIndex = currentIndex;
     newProductTour._steps = _steps.map((e) => e.clone()).toList();
     newProductTour.name = name;
     newProductTour.id = id;
-    newProductTour.skippedIndex = skippedIndex;
-    newProductTour.minAppVersion = minAppVersion;
     return newProductTour;
   }
 
-  Map<String, dynamic> toJson({bool withCurrentIndex = true}) => {
-        if (withCurrentIndex) 'currentIndex': currentIndex,
-        if (withCurrentIndex) 'skippedIndex': skippedIndex,
-        'steps': _steps.map((e) => e.toJson()).toList(),
-        'id': id,
-        'name': name,
-        'minAppVersion': minAppVersion
-      };
-
-  bool hasMatchingProductTourSteps(List<String> widgetTree) {
-    return _steps
-        .where((step) =>
-            step.index == currentIndex &&
-            (step is AnnouncementProductTourStep ||
-                (step is PointerProductTourStep &&
-                    step.widgetKey == widgetTree.toString())))
-        .isNotEmpty;
-  }
-
-  bool hasStepForTheWidget(String widget) {
-    return _steps
-        .where((step) =>
-            step.index == currentIndex &&
-            (step is PointerProductTourStep &&
-                step.widgetKey.startsWith('[$widget')))
-        .isNotEmpty;
-  }
+  Map<String, dynamic> toJson({bool withCurrentIndex = true}) =>
+      {'steps': _steps.map((e) => e.toJson()).toList(), 'id': id, 'name': name};
 
   static List<ProductTour>? fromJsonList(List<Map<String, dynamic>> jsons,
           Map<String, void Function()> callbacks) =>

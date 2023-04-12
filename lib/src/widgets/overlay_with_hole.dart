@@ -13,7 +13,7 @@ class PointerBuilderOverlay extends StatefulWidget {
   final Function() onHover;
   final ElementWithWidgetTree? Function(PointerHoverEvent event)?
       hoveredWidgetChanged;
-  final ProductTourCreatorController controller;
+  final ProductTourCreatorController? controller;
   final ElementWithWidgetTree elementWithWidgetTree;
   final VoidCallback updateProductTour;
 
@@ -154,7 +154,7 @@ class InvertedClipper extends CustomClipper<Path> {
 }
 
 class PointerBuilder extends StatefulWidget {
-  final ProductTourCreatorController controller;
+  final ProductTourCreatorController? controller;
   final ElementWithWidgetTree elementWithWidgetTree;
   final VoidCallback updateProductTour;
 
@@ -224,7 +224,7 @@ class _PointerBuilderState extends State<PointerBuilder> {
                   child: const Text('Cancel')),
               TextButton(
                   onPressed: () {
-                    widget.controller.addPointer(captionController.text,
+                    widget.controller?.addPointer(captionController.text,
                         widget.elementWithWidgetTree, nextStepAction);
                     widget.updateProductTour();
                     Navigator.of(context).pop();
