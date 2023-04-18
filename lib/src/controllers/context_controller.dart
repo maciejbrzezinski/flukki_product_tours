@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'package:flukki_product_tours/src/helpers/app_version_controller.dart';
 import 'package:string_similarity/string_similarity.dart';
 
 import 'package:collection/collection.dart';
@@ -129,10 +130,34 @@ class ContextController {
         ProductTourMatcher.getProductToursWithCurrentPointer();
 
     FatElement? matchingElement;
-    final productTour = currentProductTours.firstWhereOrNull((productTour) {
-      final currentStep = productTour.currentStep as PointerProductTourStep;
 
-      print('TESTING AND HUNTING BUGS, DO NOT INTERRUPT');
+    // Filtered product tours are oryginal ones, but only with steps with matching version. Every widget must have different index property, if there are more than one widget, get the first one.
+    final filteredProductTours = [];
+    for (ProductTour element in currentProductTours) {
+      ProductTour newElement = element.clone();
+      newElement.steps.clear();
+      Set indexes = <int>{};
+      for (ProductTourStep step in element.steps) {
+        if (step is PointerProductTourStep) {
+          if (step.versions
+                  .contains(AppVersionController.instance.currentVersion) &&
+              (!indexes.contains(step.index))) {
+            newElement.steps.add(step);
+            indexes.add(step.index);
+          }
+        }
+      }
+      filteredProductTours.add(newElement);
+    }
+
+    final productTour = filteredProductTours.firstWhereOrNull((productTour) {
+      final currentStep = productTour.currentStep as PointerProductTourStep;
+      if (!currentStep.versions
+          .contains(AppVersionController.instance.currentVersion)) {
+        return false;
+      }
+
+      ////TODO: Kod sprawdzający podobieńswo, przenieść finalnie gdzieś do buildera toursów (tutaj jest tylko na potrzeby testów)
       ////TESTING
 
       Iterable<FatElement> elements =
@@ -140,7 +165,7 @@ class ContextController {
                 return element.widgetTree == currentStep.widgetKey;
               }) ??
               [];
-      
+
       if (elements.isEmpty) {
         debugPrint(
             'The elements are empty, trying to find the widget similar to original one.');
@@ -157,7 +182,6 @@ class ContextController {
         debugPrint('Found the widget.');
       }
 
-      
       ////TESTING
 
       if (elements != null &&

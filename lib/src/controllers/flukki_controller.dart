@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flukki_product_tours/src/helpers/app_version_controller.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 

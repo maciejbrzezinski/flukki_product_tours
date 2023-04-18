@@ -269,7 +269,6 @@ class _ListOfProductToursState extends State<_ListOfProductTours> {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 24),
         child: Row(
-          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             if (productTours.isEmpty)
@@ -318,24 +317,29 @@ class _ListOfProductToursState extends State<_ListOfProductTours> {
                                         ),
                                       )
                                     else
-                                      ElevatedButton(
-                                        onPressed: () async {
-                                          setState(() {
-                                            duringDeletionIds
-                                                .add(productTour.id!);
-                                          });
-                                          await ProductToursController.instance
-                                              .removeProductTour(productTour);
-                                          if (mounted) {
-                                            setState(() {
-                                              duringDeletionIds
-                                                  .remove(productTour.id!);
-                                            });
-                                          }
-                                        },
-                                        style:
-                                            FlukkiConstants.regularButtonStyle,
-                                        child: const Text('Delete'),
+                                      Column(
+                                        children: [
+                                          //Another button TODO
+                                          ElevatedButton(
+                                            onPressed: () async {
+                                              setState(() {
+                                                duringDeletionIds
+                                                    .add(productTour.id!);
+                                              });
+                                              await ProductToursController.instance
+                                                  .removeProductTour(productTour);
+                                              if (mounted) {
+                                                setState(() {
+                                                  duringDeletionIds
+                                                      .remove(productTour.id!);
+                                                });
+                                              }
+                                            },
+                                            style:
+                                                FlukkiConstants.regularButtonStyle,
+                                            child: const Text('Delete'),
+                                          ),
+                                        ],
                                       ),
                                   ],
                                 ),

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flukki_product_tours/src/helpers/app_version_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:collection/collection.dart';
@@ -24,6 +25,7 @@ class ProductToursController {
   Future<void> initialize(
       Map<String, void Function()> callbacks, String? deviceID) async {
     isLoading = true;
+    await AppVersionController.instance.init();
     List<ProductTour>? remoteProductTours =
         await FlukkiApi.fetchProductTours(deviceId: deviceID);
 

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 
 import 'package:collection/collection.dart';
+import 'package:flukki_product_tours/src/helpers/app_version_controller.dart';
 import 'package:flutter/rendering.dart';
 
 import '../controllers/flukki_controller.dart';
@@ -22,16 +23,17 @@ class FlukkiApi {
         'Access-Control-Allow-Credentials': 'true',
       }));
 
-  static Future<String?> saveProductTour(
+    static Future<String?> saveProductTour(
       {required String appName,
       required String apiKey,
       required ProductTour productTour}) async {
     try {
       final productTourAsString =
           jsonEncode(productTour.toJson(withCurrentIndex: false));
+      final minAppVersion = AppVersionController.instance.currentVersion;
       final response = await dio.post(
           '${apiAddressPrefix}saveProductTour?key=$apiKey',
-          data: {'appName': appName, 'productTour': productTourAsString});
+          data: {'appName': appName, 'productTour': productTourAsString, 'minAppVersion': minAppVersion});
       return response.data['id'];
     } on DioError catch (e) {
       if (e.response?.statusCode == 401) {
@@ -45,10 +47,12 @@ class FlukkiApi {
     return null;
   }
 
+
   static Future<List<ProductTour>?> fetchProductTours(
       {required String? deviceId}) async {
     String apiKey = FlukkiController.instance.apiKey!;
     String appName = FlukkiController.instance.appId!;
+    String minAppVersion = AppVersionController.instance.currentVersion;
     var callbacks = FlukkiController.instance.callbacks;
 
     try {
@@ -56,7 +60,7 @@ class FlukkiApi {
         return [];
       }
       final response = await dio.post(
-          '${apiAddressPrefix}getProductTours?key=$apiKey&appName=$appName',
+          '${apiAddressPrefix}getProductTours?key=$apiKey&appName=$appName&minAppVersion=$minAppVersion',
           data: {'deviceId': deviceId});
       return ProductTour.fromJsonList(
           List<Map<String, dynamic>>.from(

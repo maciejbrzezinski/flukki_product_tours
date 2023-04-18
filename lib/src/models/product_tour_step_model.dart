@@ -36,7 +36,7 @@ class PointerProductTourStep extends ProductTourStep {
   late String? _action;
   int widgetIndex;
   String widgetName;
-  List<String> versions = [];
+  List versions = [];
 
   PointerAction get pointerAction =>
       PointerAction.values.firstWhere((element) => element.name == _action);
@@ -86,7 +86,7 @@ class AnnouncementProductTourStep extends ProductTourStep {
   List<AnnouncementWidget> widgets;
   Color? backgroundColor;
   bool isNew = true;
-  List<String> versions = [];
+  List versions = [];
 
   AnnouncementProductTourStep(
     int index, 

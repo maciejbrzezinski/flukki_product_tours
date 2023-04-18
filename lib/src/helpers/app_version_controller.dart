@@ -9,8 +9,12 @@ class AppVersionController {
 
   Future<void> init() async {
     final PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    _currentVersion = packageInfo.version.split('.');
-    _currentVersion!.add(packageInfo.buildNumber);
+    if (packageInfo.version == "") {
+      _currentVersion = ["0", "0", "0", "0"];
+    } else {
+      _currentVersion = packageInfo.version.split('.');
+      _currentVersion!.add(packageInfo.buildNumber != "" ? packageInfo.buildNumber : "0");
+    }
   }
 
   /// Returns the current app version in format x.y.z+buildNumber.
@@ -23,8 +27,8 @@ class AppVersionController {
   /// Format of [version] should be x.y.z+buildNumber.
   /// Example: 1.0.0+1
   bool isCurrentVersionGreaterEqual(String version) {
-    final List<String> savedParts = version.split('+');
-    List<String> savedVersion = savedParts[0].split('.');
+    final List savedParts = version.split('+');
+    List savedVersion = savedParts[0].split('.');
     savedVersion.add(savedParts[1]);
 
     for (var i = 0; i < 4; i++) {
