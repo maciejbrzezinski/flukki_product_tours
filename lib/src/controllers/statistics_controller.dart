@@ -164,7 +164,7 @@ class ProductTourProgress {
       {required this.productTourId,
       required this.appName,
       this.currentStep = 0,
-      this.skippedIndex = 0});
+      this.skippedIndex});
 
   Map<String, dynamic> toJson() => {
         'currentStep': currentStep,

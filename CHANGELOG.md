@@ -1,3 +1,7 @@
+## 2.0.4
+
+* Fixed bug with skipped product tours
+
 ## 2.0.3
 
 * Updated README.md

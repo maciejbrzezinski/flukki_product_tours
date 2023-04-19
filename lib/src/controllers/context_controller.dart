@@ -113,6 +113,7 @@ class ContextController {
   }
 
   void performCheck() {
+    if(_context == null) return;
     if (ProductToursController.instance.isStepDisplayed) return;
     if (!FlukkiController.instance.isInBuilderTestMode &&
         ProductToursController.instance.productTours.isEmpty) return;
